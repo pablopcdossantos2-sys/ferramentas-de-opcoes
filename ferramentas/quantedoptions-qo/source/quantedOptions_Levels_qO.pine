@@ -1,0 +1,418 @@
+//@version=6
+// ─────────────────────────────────────────────────────────────────────────────
+// quantedOptions Levels [qO]
+//
+// Draws the levels copied from quantedOptions — quantedTrader (QQQ, SPY, any
+// captured ticker) or quantedGamma / the orderflow plugin (SPX) — via each
+// dashboard's "Copy for TradingView", on any TradingView chart:
+//   call wall · put wall · gamma flip · Gamma C / P · DEX C / P · top-5 strikes,
+//   a shaded zone between the walls, and the strike profile as a ladder on the
+//   right edge (one bar per strike, sized by net gamma, cyan positive / red negative).
+//
+// Conversion: when the chart is a proxy of the pasted ticker the levels are
+// rescaled live — QQQ → NQ / MNQ / NDX, SPY → ES / MES / SPX, IWM → RTY / M2K,
+// DIA → YM / MYM, GLD → GC / MGC, SLV → SI / SIL, USO → CL / MCL / QM — by the
+// ratio of the chart's price to the ETF's price, sampled only on bars where the
+// ETF actually traded (so an overnight futures move does not drag the levels).
+// NDX levels on NQ and SPX levels on ES / MES use the basis (future − cash)
+// instead of a ratio; SPX on SPY uses the ratio.
+//
+// Nothing leaves TradingView: the only input is the pasted string. Levels are
+// a snapshot at the pasted time — paste again to refresh.
+//
+// String format (qo1; qt1 accepted): qo1|TICKER|YYYY-MM-DD|HH:MM|SPOT|COHORT|net=|cw=|pw=|flip=|gc=|gp=|dc=|dp=|top=|p=
+// ─────────────────────────────────────────────────────────────────────────────
+indicator("quantedOptions Levels [qO]", shorttitle = "qO Levels", overlay = true,
+     max_lines_count = 500, max_boxes_count = 500, max_labels_count = 500)
+
+// ── Inputs ───────────────────────────────────────────────────────────────────
+grpL = "Levels"
+lv         = input.text_area("", "Paste from quantedOptions", group = grpL,
+     tooltip = "quantedTrader (or quantedGamma) → levels strip → Copy for TradingView, then paste the whole line here.")
+showWalls  = input.bool(true,  "Call / put wall",            group = grpL)
+showFlip   = input.bool(true,  "Gamma flip",                 group = grpL)
+showGamma  = input.bool(true,  "Gamma C / P (builder walls)", group = grpL)
+showDex    = input.bool(true,  "DEX C / P",                  group = grpL)
+showTop    = input.bool(true,  "Top 5 strikes",              group = grpL)
+showZone   = input.bool(true,  "Shade between the walls",    group = grpL)
+showLadder = input.bool(true,  "Strike profile ladder",      group = grpL)
+
+grpC = "Conversion"
+convMode   = input.string("Auto", "Convert levels to this chart", options = ["Auto", "Off (1:1)", "Fixed ratio"], group = grpC,
+     tooltip = "Auto: on the pasted ticker's own chart levels are drawn as-is; on a proxy (QQQ → NQ, SPY → ES, GLD → GC …) they are rescaled by the live price ratio; on any other chart they are drawn 1:1 with a warning. Fixed ratio: multiply every level by the number below.")
+fixedRatio = input.float(1.0, "Fixed ratio (chart ÷ levels ticker)", minval = 0.0001, step = 0.01, group = grpC)
+
+grpS = "Style"
+glow         = input.bool(true, "Glow",                                  group = grpS)
+lineBack     = input.int(150,   "Lines start (bars back)",               minval = 10, maxval = 4000, group = grpS)
+ladderOffset = input.int(2,     "Ladder offset (bars right of last bar)", minval = 0,  maxval = 50,   group = grpS)
+ladderLen    = input.int(28,    "Ladder max length (bars)",              minval = 5,  maxval = 200,  group = grpS)
+sizeOpt      = input.string("Small", "Label size", options = ["Tiny", "Small", "Normal"], group = grpS)
+showHeader   = input.bool(true, "Header",                                group = grpS)
+
+// ── Colours (quantedOptions tokens) ──────────────────────────────────────────
+cPos = color.rgb(34, 211, 238)    // cyan  — positive gamma / call side
+cNeg = color.rgb(248, 113, 113)   // red   — negative gamma / put side
+cAmb = color.rgb(251, 191, 36)    // amber — flip / accent
+cDex = color.rgb(167, 139, 250)   // violet — DEX walls
+cTop = color.rgb(212, 212, 216)   // neutral — top-5
+lblSize = sizeOpt == "Tiny" ? size.tiny : sizeOpt == "Normal" ? size.normal : size.small
+
+// ── Parse the pasted string once ─────────────────────────────────────────────
+var string[] tok  = str.split(lv, "|")
+var int      ntok = array.size(tok)
+var bool     ok   = ntok >= 6 and (array.get(tok, 0) == "qo1" or array.get(tok, 0) == "qt1")
+
+getv(string key) =>
+    string out = ""
+    if ok and ntok > 6
+        for i = 6 to ntok - 1
+            t = array.get(tok, i)
+            if str.startswith(t, key + "=")
+                out := str.substring(t, str.length(key) + 1)
+    out
+
+num(string s) =>
+    float v = na
+    if s != ""
+        v := str.tonumber(s)
+    v
+
+var string tkr    = ""
+var string sdate  = ""
+var string stime  = ""
+var string cohort = ""
+var float  spot0  = na
+var float  netM   = na
+var float  cw     = na
+var float  pw     = na
+var float  flip   = na
+var float  gc     = na
+var float  gp     = na
+var float  dc     = na
+var float  dp     = na
+var float[] topK  = array.new<float>()
+var float[] pk    = array.new<float>()   // profile strikes (ascending)
+var float[] pv    = array.new<float>()   // profile net GEX, $M
+var bool parsed   = false
+
+if not parsed
+    parsed := true
+    if ok
+        tkr    := str.upper(array.get(tok, 1))
+        sdate  := array.get(tok, 2)
+        stime  := array.get(tok, 3)
+        spot0  := str.tonumber(array.get(tok, 4))
+        cohort := array.get(tok, 5)
+        netM   := num(getv("net"))
+        cw     := num(getv("cw"))
+        pw     := num(getv("pw"))
+        flip   := num(getv("flip"))
+        gc     := num(getv("gc"))
+        gp     := num(getv("gp"))
+        dc     := num(getv("dc"))
+        dp     := num(getv("dp"))
+        string[] ts = str.split(getv("top"), ",")
+        if array.size(ts) > 0
+            for i = 0 to array.size(ts) - 1
+                k = str.tonumber(array.get(ts, i))
+                if not na(k)
+                    array.push(topK, k)
+        string[] ps = str.split(getv("p"), ",")
+        if array.size(ps) > 0
+            for i = 0 to array.size(ps) - 1
+                string[] kv = str.split(array.get(ps, i), ":")
+                if array.size(kv) == 2
+                    k = str.tonumber(array.get(kv, 0))
+                    v = str.tonumber(array.get(kv, 1))
+                    if not na(k) and not na(v)
+                        array.push(pk, k)
+                        array.push(pv, v)
+
+// ── Reference prices (constant symbols — requested unconditionally) ──────────
+px(string sym) => request.security(sym, timeframe.period, close, ignore_invalid_symbol = true)
+tm(string sym) => request.security(sym, timeframe.period, time,  ignore_invalid_symbol = true)
+
+qqq  = px("NASDAQ:QQQ")
+qqqT = tm("NASDAQ:QQQ")
+spy  = px("AMEX:SPY")
+spyT = tm("AMEX:SPY")
+iwm  = px("AMEX:IWM")
+iwmT = tm("AMEX:IWM")
+dia  = px("AMEX:DIA")
+diaT = tm("AMEX:DIA")
+gld  = px("AMEX:GLD")
+gldT = tm("AMEX:GLD")
+slv  = px("AMEX:SLV")
+slvT = tm("AMEX:SLV")
+uso  = px("AMEX:USO")
+usoT = tm("AMEX:USO")
+ndx  = px("NASDAQ:NDX")
+ndxT = tm("NASDAQ:NDX")
+spx  = px("SP:SPX")
+spxT = tm("SP:SPX")
+
+float etfPx = na
+int   etfT  = na
+if tkr == "QQQ"
+    etfPx := qqq
+    etfT  := qqqT
+else if tkr == "SPY"
+    etfPx := spy
+    etfT  := spyT
+else if tkr == "IWM"
+    etfPx := iwm
+    etfT  := iwmT
+else if tkr == "DIA"
+    etfPx := dia
+    etfT  := diaT
+else if tkr == "GLD"
+    etfPx := gld
+    etfT  := gldT
+else if tkr == "SLV"
+    etfPx := slv
+    etfT  := slvT
+else if tkr == "USO"
+    etfPx := uso
+    etfT  := usoT
+else if tkr == "NDX"
+    etfPx := ndx
+    etfT  := ndxT
+else if tkr == "SPX"
+    etfPx := spx
+    etfT  := spxT
+
+// ── Which chart is this? ─────────────────────────────────────────────────────
+root    = syminfo.root
+chartTk = syminfo.ticker
+same    = chartTk == tkr
+isNq    = root == "NQ" or root == "MNQ"
+isEs    = root == "ES" or root == "MES"
+proxy   = (tkr == "QQQ" and (isNq or chartTk == "NDX")) or
+          (tkr == "NDX" and (isNq or chartTk == "QQQ")) or
+          (tkr == "SPY" and (isEs or chartTk == "SPX")) or
+          (tkr == "SPX" and (isEs or chartTk == "SPY")) or
+          (tkr == "IWM" and (root == "RTY" or root == "M2K")) or
+          (tkr == "DIA" and (root == "YM"  or root == "MYM")) or
+          (tkr == "GLD" and (root == "GC"  or root == "MGC")) or
+          (tkr == "SLV" and (root == "SI"  or root == "SIL")) or
+          (tkr == "USO" and (root == "CL"  or root == "MCL" or root == "QM"))
+useBasis = (tkr == "NDX" and isNq) or (tkr == "SPX" and isEs)   // cash index → its future: add the basis, not a ratio
+
+// Live ratio / basis, sampled only on bars where the ETF printed (etfT == time)
+// so the levels do not drift with an overnight futures move.
+var float liveRatio = na
+var float liveBasis = na
+var bool  freshNow  = false
+freshNow := false
+if not na(etfPx) and etfPx != 0 and not na(etfT) and etfT == time
+    liveRatio := close / etfPx
+    liveBasis := close - etfPx
+    freshNow  := true
+
+float factor = 1.0
+bool  converting = false
+string convNote = ""
+if convMode == "Off (1:1)"
+    factor := 1.0
+    convNote := "1:1"
+else if convMode == "Fixed ratio"
+    factor := fixedRatio
+    converting := fixedRatio != 1.0
+    convNote := "× " + str.tostring(fixedRatio, "#,##0.####") + " (fixed)"
+else if same
+    factor := 1.0
+    convNote := "on " + chartTk
+else if proxy and useBasis and not na(liveBasis)
+    converting := true
+    convNote := "→ " + chartTk + " +" + str.tostring(liveBasis, "#,##0.00") + " basis" + (freshNow ? " · live" : " · last")
+else if proxy and not useBasis and not na(liveRatio)
+    factor := liveRatio
+    converting := true
+    convNote := "→ " + chartTk + " × " + str.tostring(liveRatio, "#,##0.####") + (freshNow ? " · live" : " · last")
+else if proxy
+    convNote := "→ " + chartTk + " · ratio pending (no " + tkr + " bar yet)"
+else
+    convNote := "chart " + chartTk + " is not " + tkr + " — levels drawn 1:1"
+
+conv(float k) =>
+    float y = na
+    if not na(k)
+        y := useBasis and convMode == "Auto" and proxy and not na(liveBasis) ? k + liveBasis : k * factor
+    y
+
+scaleD(float d) => useBasis and convMode == "Auto" and proxy ? d : d * factor
+
+fmtChart(float y) => str.tostring(y, format.mintick)
+fmtK(float k)     => str.tostring(k, "#,##0.##")
+fmtM(float m)     => (m >= 0 ? "+" : "−") + "$" + str.tostring(math.abs(m), "#,##0.0") + "M"
+
+// ── Drawing (rebuilt on every update of the last bar so the ratio stays live) ─
+var line[]  L  = array.new<line>()
+var box[]   B  = array.new<box>()
+var label[] LB = array.new<label>()
+
+clearAll() =>
+    if array.size(L) > 0
+        for i = 0 to array.size(L) - 1
+            line.delete(array.get(L, i))
+    array.clear(L)
+    if array.size(B) > 0
+        for i = 0 to array.size(B) - 1
+            box.delete(array.get(B, i))
+    array.clear(B)
+    if array.size(LB) > 0
+        for i = 0 to array.size(LB) - 1
+            label.delete(array.get(LB, i))
+    array.clear(LB)
+
+xLeft()  => bar_index - lineBack
+xRight() => bar_index + ladderOffset + ladderLen + 2
+
+// Levels that share a strike (C WALL = GAMMA C = #1 is common) are drawn once,
+// with the names joined, so labels never pile up on one line.
+var float[]  lvK = array.new<float>()
+var string[] lvN = array.new<string>()
+var color[]  lvC = array.new<color>()
+var string[] lvS = array.new<string>()
+var int[]    lvW = array.new<int>()
+var float[]  lvV = array.new<float>()
+
+addLevel(float k, color c, string name, string sty, int w, float valM) =>
+    if not na(k)
+        int idx = -1
+        n = array.size(lvK)
+        if n > 0
+            for i = 0 to n - 1
+                if array.get(lvK, i) == k
+                    idx := i
+        if idx >= 0
+            array.set(lvN, idx, array.get(lvN, idx) + " · " + name)
+            if na(array.get(lvV, idx)) and not na(valM)
+                array.set(lvV, idx, valM)
+        else
+            array.push(lvK, k)
+            array.push(lvN, name)
+            array.push(lvC, c)
+            array.push(lvS, sty)
+            array.push(lvW, w)
+            array.push(lvV, valM)
+
+clearLevels() =>
+    array.clear(lvK)
+    array.clear(lvN)
+    array.clear(lvC)
+    array.clear(lvS)
+    array.clear(lvW)
+    array.clear(lvV)
+
+drawLevel(float k, color c, string name, string sty, int w, float valM) =>
+    if not na(k)
+        y  = conv(k)
+        x1 = xLeft()
+        x2 = xRight()
+        st = sty == "dot" ? line.style_dotted : sty == "dash" ? line.style_dashed : line.style_solid
+        if glow
+            array.push(L, line.new(x1, y, x2, y, xloc.bar_index, extend.none, color.new(c, 88), line.style_solid, w + 6))
+            array.push(L, line.new(x1, y, x2, y, xloc.bar_index, extend.none, color.new(c, 72), line.style_solid, w + 3))
+        array.push(L, line.new(x1, y, x2, y, xloc.bar_index, extend.none, c, st, w))
+        txt = name + "  " + fmtChart(y) + (converting ? "   " + tkr + " " + fmtK(k) : "") + (na(valM) ? "" : "   " + fmtM(valM))
+        array.push(LB, label.new(x2 + 1, y, txt, xloc.bar_index, yloc.price, color.new(color.black, 100), label.style_label_left, c, lblSize))
+
+profileAt(float k) =>
+    float v = na
+    n = array.size(pk)
+    if n > 0
+        for i = 0 to n - 1
+            if array.get(pk, i) == k
+                v := array.get(pv, i)
+    v
+
+if barstate.islast
+    clearAll()
+    clearLevels()
+    if ok
+        // zone between the walls, tinted by the cohort's net gamma sign
+        if showZone and not na(cw) and not na(pw) and cw > pw
+            zc = na(netM) or netM >= 0 ? cPos : cNeg
+            array.push(B, box.new(left = xLeft(), top = conv(cw), right = xRight(), bottom = conv(pw),
+                 border_color = color.new(zc, 100), bgcolor = color.new(zc, 93)))
+        // ladder: the strike profile on the right edge
+        np = array.size(pk)
+        if showLadder and np > 1
+            float step = na
+            float maxAbs = 0.0
+            for i = 0 to np - 1
+                a = math.abs(array.get(pv, i))
+                if a > maxAbs
+                    maxAbs := a
+                if i > 0
+                    d = array.get(pk, i) - array.get(pk, i - 1)
+                    if d > 0 and (na(step) or d < step)
+                        step := d
+            if maxAbs > 0 and not na(step)
+                hh = scaleD(step) * 0.42
+                x0 = bar_index + ladderOffset
+                array.push(L, line.new(x0, conv(array.get(pk, 0)) - hh, x0, conv(array.get(pk, np - 1)) + hh, xloc.bar_index, extend.none, color.new(cTop, 65), line.style_solid, 1))
+                for i = 0 to np - 1
+                    k = array.get(pk, i)
+                    v = array.get(pv, i)
+                    y = conv(k)
+                    len = math.max(1, math.round(ladderLen * math.abs(v) / maxAbs))
+                    c = v >= 0 ? cPos : cNeg
+                    isWall = (not na(cw) and k == cw) or (not na(pw) and k == pw)
+                    alpha = isWall ? 12 : math.round(78 - 50 * math.abs(v) / maxAbs)
+                    array.push(B, box.new(left = x0, top = y + hh, right = x0 + len, bottom = y - hh,
+                         border_color = isWall ? c : color.new(c, 100), border_width = 1, bgcolor = color.new(c, alpha)))
+        // lines + labels (drawn after the ladder so labels sit on top)
+        if showWalls
+            addLevel(cw, cPos, "C WALL", "solid", 2, profileAt(cw))
+            addLevel(pw, cNeg, "P WALL", "solid", 2, profileAt(pw))
+        if showFlip
+            addLevel(flip, cAmb, "FLIP", "dot", 1, na)
+        if showGamma
+            addLevel(gc, cPos, "GAMMA C", "dash", 1, na)
+            addLevel(gp, cNeg, "GAMMA P", "dash", 1, na)
+        if showDex
+            addLevel(dc, cDex, "DEX C", "dash", 1, na)
+            addLevel(dp, cDex, "DEX P", "dash", 1, na)
+        if showTop and array.size(topK) > 0
+            for i = 0 to array.size(topK) - 1
+                k = array.get(topK, i)
+                v = profileAt(k)
+                addLevel(k, na(v) ? cTop : v >= 0 ? cPos : cNeg, "#" + str.tostring(i + 1), "dot", 1, v)
+        nl = array.size(lvK)
+        if nl > 0
+            for i = 0 to nl - 1
+                drawLevel(array.get(lvK, i), array.get(lvC, i), array.get(lvN, i), array.get(lvS, i), array.get(lvW, i), array.get(lvV, i))
+        // spot at the time of the paste
+        if not na(spot0)
+            ys = conv(spot0)
+            array.push(L, line.new(xLeft(), ys, bar_index, ys, xloc.bar_index, extend.none, color.new(cAmb, 60), line.style_dotted, 1))
+            array.push(LB, label.new(xLeft(), ys, "spot @ " + stime + " CT  " + fmtChart(ys), xloc.bar_index, yloc.price, color.new(color.black, 100), label.style_label_right, color.new(cAmb, 20), size.tiny))
+
+// ── Header ───────────────────────────────────────────────────────────────────
+var table hdr = table.new(position.top_right, 1, 3, bgcolor = color.new(color.black, 25), border_width = 0)
+if barstate.islast and showHeader
+    if ok
+        table.cell(hdr, 0, 0, "quantedOptions levels · " + tkr + " · " + cohort, text_color = cAmb, text_size = lblSize, text_halign = text.align_left)
+        table.cell(hdr, 0, 1, sdate + " " + stime + " CT · spot " + fmtK(spot0) + (na(netM) ? "" : " · net " + fmtM(netM)), text_color = color.new(cTop, 15), text_size = lblSize, text_halign = text.align_left)
+        table.cell(hdr, 0, 2, convNote, text_color = (proxy or same or convMode != "Auto") ? color.new(cTop, 35) : cNeg, text_size = lblSize, text_halign = text.align_left)
+    else
+        table.cell(hdr, 0, 0, "quantedOptions levels", text_color = cAmb, text_size = lblSize, text_halign = text.align_left)
+        table.cell(hdr, 0, 1, lv == "" ? "Paste the string from quantedOptions (levels strip → Copy for TradingView) in the indicator settings." : "Could not read that string — copy it again from quantedOptions.", text_color = color.new(cTop, 15), text_size = lblSize, text_halign = text.align_left)
+        table.cell(hdr, 0, 2, "", text_size = lblSize)
+
+// ── Alerts (levels are plotted invisibly so TradingView alerts see them) ─────
+cwY   = conv(cw)
+pwY   = conv(pw)
+flipY = conv(flip)
+plot(cwY,   "Call wall", display = display.none)
+plot(pwY,   "Put wall",  display = display.none)
+plot(flipY, "Flip",      display = display.none)
+xCw   = ta.cross(close, cwY)
+xPw   = ta.cross(close, pwY)
+xFlip = ta.cross(close, flipY)
+alertcondition(not na(cwY)   and xCw,   "Price crosses the call wall",  "quantedOptions: price crossed the call wall")
+alertcondition(not na(pwY)   and xPw,   "Price crosses the put wall",   "quantedOptions: price crossed the put wall")
+alertcondition(not na(flipY) and xFlip, "Price crosses the gamma flip", "quantedOptions: price crossed the gamma flip")
