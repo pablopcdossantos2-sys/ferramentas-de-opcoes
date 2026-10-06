@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -24,7 +24,8 @@
         "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
       ],
       "status": "protótipo",
-      "page": "ferramentas/ewz-gex-win/index.html"
+      "page": "ferramentas/ewz-gex-win/index.html",
+      "role": "primary"
     },
     {
       "id": "mapa-de-opcoes",
@@ -43,7 +44,8 @@
       "automation": "média/alta conforme fonte",
       "source_repo": "https://github.com/pablopcdossantos2-sys/mapa-de-opcoes",
       "status": "documentado / implementação externa ao catálogo",
-      "page": "ferramentas/mapa-de-opcoes/index.html"
+      "page": "ferramentas/mapa-de-opcoes/index.html",
+      "role": "complementary"
     },
     {
       "id": "ewz-mapa-opcoes-oi",
@@ -66,7 +68,8 @@
         "ferramentas/ewz-mapa-opcoes-oi/GUIA.md"
       ],
       "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia",
-      "page": "ferramentas/ewz-mapa-opcoes-oi/index.html"
+      "page": "ferramentas/ewz-mapa-opcoes-oi/index.html",
+      "role": "reference"
     },
     {
       "id": "quantedoptions-qo",
@@ -88,7 +91,8 @@
         "ferramentas/quantedoptions-qo/source/quantedOptions_Levels_qO.pine"
       ],
       "status": "código recebido para análise",
-      "page": "ferramentas/quantedoptions-qo/index.html"
+      "page": "ferramentas/quantedoptions-qo/index.html",
+      "role": "reference"
     },
     {
       "id": "options-levels",
@@ -110,7 +114,8 @@
         "ferramentas/options-levels/source/Options_Levels.pine"
       ],
       "status": "código recebido para análise",
-      "page": "ferramentas/options-levels/index.html"
+      "page": "ferramentas/options-levels/index.html",
+      "role": "reference"
     },
     {
       "id": "support-resistance-options-data",
@@ -134,7 +139,14 @@
         "ferramentas/support-resistance-options-data/source/Support_and_Resistance_levels_from_Options_Data.pine"
       ],
       "status": "código recebido para análise",
-      "page": "ferramentas/support-resistance-options-data/index.html"
+      "page": "ferramentas/support-resistance-options-data/index.html",
+      "role": "reference"
     }
-  ]
+  ],
+  "project_strategy": {
+    "primary_tool_id": "ewz-gex-win",
+    "primary_goal": "Desenvolver a ferramenta EWZ GEX → WIN inspirada na metodologia de projeção dos níveis de Gamma Exposure do EWZ para o WIN.",
+    "secondary_goal": "Catalogar e analisar ferramentas semelhantes para aprendizado, comparação metodológica e possíveis melhorias futuras.",
+    "rule": "Ferramentas de referência não possuem a mesma prioridade de desenvolvimento do projeto principal."
+  }
 }
