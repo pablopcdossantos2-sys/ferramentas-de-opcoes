@@ -1,0 +1,118 @@
+//@version=5
+indicator("Niveles de Opciones 🎯", overlay=true, max_lines_count=500, max_labels_count=500)
+
+// ===== INPUT PRINCIPAL - PEGA TU LISTA AQUÍ =====
+levelsList = input.string("[6750,6700,6739,6729,6687,6641,6654,6636,6715,6798,6856,6682,6625]", 
+     "📋 Lista de Niveles", 
+     tooltip="Formato: [CallWall,PutWall,GammaFlip,DarkGamma,Whale1,Whale2,Whale3,Whale4,Whale5,UpperSigma1,UpperSigma2,LowerSigma1,LowerSigma2]", 
+     group="📊 Datos")
+
+// ===== CONFIGURACIÓN VISUAL =====
+baseLengthBars = input.int(50, "Longitud Base de Líneas (barras)", minval=10, maxval=200, group="🎨 Apariencia")
+showLabels     = input.bool(true, "Mostrar Etiquetas", group="🎨 Apariencia")
+lineWidth      = input.int(2, "Grosor de Línea", minval=1, maxval=4, group="🎨 Apariencia")
+
+// NUEVOS CONTROLES (extensión a la derecha)
+extendRight    = input.bool(true, "Extender a la derecha (línea + etiqueta)", group="🎨 Apariencia")
+rightBarsForLabel = input.int(5, "Barras a la derecha (para etiqueta)", minval=5, maxval=300, group="🎨 Apariencia")
+
+// Toggle para activar/desactivar grupos de niveles
+showCritical = input.bool(true, "Mostrar Niveles Críticos", group="👁️ Visibilidad")
+showWhales   = input.bool(true, "Mostrar Niveles Whale", group="👁️ Visibilidad")
+showSigmas   = input.bool(true, "Mostrar Desviaciones", group="👁️ Visibilidad")
+
+// ===== ARRAYS GLOBALES PARA GUARDAR LAS 13 LÍNEAS Y 13 ETIQUETAS =====
+var line[] lines = array.new<line>(13)
+var label[] labels = array.new<label>(13)
+
+// ===== FUNCIÓN PARA PARSEAR LA LISTA =====
+parseList(string listStr) =>
+    cleanStr = str.replace_all(str.replace_all(str.replace_all(listStr, "[", ""), "]", ""), " ", "")
+    var float[] values = array.new_float(13, 0.0)
+    int valueIndex = 0
+    string currentNum = ""
+    for i = 0 to str.length(cleanStr) - 1
+        char = str.substring(cleanStr, i, i + 1)
+        if char == ","
+            if str.length(currentNum) > 0
+                array.set(values, valueIndex, str.tonumber(currentNum))
+                valueIndex += 1
+            currentNum := ""
+        else
+            currentNum += char
+    if str.length(currentNum) > 0 and valueIndex < 13
+        array.set(values, valueIndex, str.tonumber(currentNum))
+    values
+
+// ===== PARSEAR LISTA DE ENTRADA =====
+levelValues = parseList(levelsList)
+
+// ===== CONFIGURACIÓN INTERNA =====
+var string[] levelNames = array.from(
+     "Call Wall", "Put Wall", "Gamma Flip", "Dark Gamma",
+     "Whale 1", "Whale 2", "Whale 3", "Whale 4", "Whale 5",
+     "Upper σ1", "Upper σ2", "Lower σ1", "Lower σ2")
+
+var string[] levelEmojis = array.from(
+     "🟢", "🔴", "⚖️", "🌑",
+     "🐋", "🐋", "🐋", "🐋", "🐋",
+     "📈σ¹", "📈σ²", "📉σ¹", "📉σ²")
+
+var color[] levelColors = array.from(
+     color.new(#00ff88, 20), color.new(#ff4444, 20), 
+     color.new(#ffaa00, 20), color.new(#8844ff, 20),
+     color.new(#00aaff, 30), color.new(#00aaff, 30), 
+     color.new(#00aaff, 30), color.new(#00aaff, 30), color.new(#00aaff, 30),
+     color.new(#66ff66, 40), color.new(#66ff66, 40), 
+     color.new(#ff6666, 40), color.new(#ff6666, 40))
+
+// Multiplicadores de longitud por importancia
+var float[] lengthMultipliers = array.from(
+     1.0, 1.1, 1.15, 1.2,
+     1.0, 0.85, 0.7, 0.55, 0.4,
+     1.2, 1.2, 1.2, 1.2)
+
+// Visibilidad por grupo
+levelVisibility = array.from(
+     showCritical, showCritical, showCritical, showCritical,
+     showWhales, showWhales, showWhales, showWhales, showWhales,
+     showSigmas, showSigmas, showSigmas, showSigmas)
+
+// ===== DIBUJAR TODOS LOS NIVELES =====
+if barstate.islast
+    // PRIMERO: Borrar las 13 líneas y 13 etiquetas anteriores
+    for i = 0 to 12
+        line.delete(array.get(lines, i))
+        label.delete(array.get(labels, i))
+    
+    // SEGUNDO: Dibujar las 13 nuevas líneas y etiquetas
+    for i = 0 to 12
+        price = array.get(levelValues, i)
+        name = array.get(levelNames, i)
+        emoji = array.get(levelEmojis, i)
+        col = array.get(levelColors, i)
+        visible = array.get(levelVisibility, i)
+        lengthMult = array.get(lengthMultipliers, i)
+        
+        if visible and not na(price) and price > 0
+            lastBar = last_bar_index
+            levelLength = math.round(baseLengthBars * lengthMult)
+            startBar = lastBar - levelLength
+            x2Manual = extendRight ? (lastBar + rightBarsForLabel) : lastBar
+
+            // Crear y guardar línea
+            newLine = line.new(x1=startBar, y1=price, x2=x2Manual, y2=price, color=col, width=lineWidth, style=line.style_solid, extend=extend.none)
+            array.set(lines, i, newLine)
+
+            // Crear y guardar etiqueta
+            if showLabels
+                newLabel = label.new(x=x2Manual, y=price, text=emoji + " " + name + " " + str.tostring(price, "#.##"), color=color.new(col, 70), textcolor=color.white, style=label.style_label_left, size=size.small)
+                array.set(labels, i, newLabel)
+
+// ===== ALERTAS OPCIONALES =====
+alertcondition(ta.crossover(close, array.get(levelValues, 0)), 
+     "Precio cruza Call Wall ⬆️", 
+     "El precio ha cruzado por encima del Call Wall")
+alertcondition(ta.crossunder(close, array.get(levelValues, 1)), 
+     "Precio cruza Put Wall ⬇️", 
+     "El precio ha cruzado por debajo del Put Wall")
