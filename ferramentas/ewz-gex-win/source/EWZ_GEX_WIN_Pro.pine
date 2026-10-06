@@ -1,0 +1,389 @@
+//@version=6
+indicator("EWZ GEX → WIN Pro", overlay = true, max_labels_count = 100)
+
+// ============================================================================
+// 1) REFERÊNCIA SINCRONIZADA EWZ ↔ WIN
+// ============================================================================
+
+groupRef = "1. Referência EWZ ↔ WIN"
+
+ewzSymbol = input.symbol("AMEX:EWZ", "Ativo-base (EWZ)", group = groupRef)
+
+refMode = input.string(
+     "Automática — fechamento NY",
+     "Modo da referência",
+     options = ["Automática — fechamento NY", "Manual sincronizada"],
+     group = groupRef,
+     tooltip = "Automática: captura EWZ e o ativo do gráfico no mesmo instante, no fechamento regular de NY (16:00 America/New_York). Manual: você informa os dois preços do mesmo instante."
+)
+
+refTf = input.timeframe(
+     "5",
+     "Timeframe da captura automática",
+     group = groupRef,
+     tooltip = "5 minutos é o recomendado. O indicador procura a barra que fecha exatamente às 16:00 em Nova York."
+)
+
+ewzManual = input.float(
+     0.0,
+     "EWZ de referência (manual)",
+     minval = 0.0,
+     step = 0.01,
+     group = groupRef
+)
+
+winManual = input.float(
+     0.0,
+     "WIN de referência (manual)",
+     minval = 0.0,
+     step = 5.0,
+     group = groupRef
+)
+
+// Captura o último fechamento de uma barra que terminou exatamente às 16:00
+// de Nova York. Usar o fuso "America/New_York" faz o ajuste de DST automaticamente.
+f_lastNyClose() =>
+    bool isNyClose = hour(time_close, "America/New_York") == 16 and minute(time_close, "America/New_York") == 0
+    ta.valuewhen(isNyClose, close, 0)
+
+f_lastNyCloseTime() =>
+    bool isNyClose = hour(time_close, "America/New_York") == 16 and minute(time_close, "America/New_York") == 0
+    ta.valuewhen(isNyClose, time_close, 0)
+
+ewzAuto = request.security(
+     ewzSymbol,
+     refTf,
+     f_lastNyClose(),
+     gaps = barmerge.gaps_off,
+     lookahead = barmerge.lookahead_off
+)
+
+winAuto = request.security(
+     syminfo.tickerid,
+     refTf,
+     f_lastNyClose(),
+     gaps = barmerge.gaps_off,
+     lookahead = barmerge.lookahead_off
+)
+
+refTimeAuto = request.security(
+     ewzSymbol,
+     refTf,
+     f_lastNyCloseTime(),
+     gaps = barmerge.gaps_off,
+     lookahead = barmerge.lookahead_off
+)
+
+ewzRef = refMode == "Automática — fechamento NY" ? ewzAuto : ewzManual
+winRef = refMode == "Automática — fechamento NY" ? winAuto : winManual
+
+bool refOk = not na(ewzRef) and not na(winRef) and ewzRef > 0 and winRef > 0
+
+
+// ============================================================================
+// 2) MODELO DE PROJEÇÃO
+// ============================================================================
+
+groupModel = "2. Modelo de projeção"
+
+projectionMode = input.string(
+     "1:1 (método original)",
+     "Modelo",
+     options = ["1:1 (método original)", "Beta ajustável"],
+     group = groupModel
+)
+
+betaInput = input.float(
+     1.00,
+     "Beta EWZ → WIN",
+     minval = 0.10,
+     maxval = 3.00,
+     step = 0.01,
+     group = groupModel,
+     tooltip = "Usado somente no modo Beta ajustável. Ex.: beta 0,85 significa que uma variação de 1% no EWZ é projetada como 0,85% no WIN."
+)
+
+roundToTick = input.bool(
+     true,
+     "Arredondar ao tick do ativo",
+     group = groupModel
+)
+
+beta = projectionMode == "1:1 (método original)" ? 1.0 : betaInput
+
+f_pctFromRef(float ewzLevel) =>
+    refOk and ewzLevel > 0 ? (ewzLevel / ewzRef) - 1.0 : na
+
+f_roundTick(float value) =>
+    roundToTick and not na(value) ? math.round(value / syminfo.mintick) * syminfo.mintick : value
+
+f_project(float ewzLevel) =>
+    float pct = f_pctFromRef(ewzLevel)
+    float raw = not na(pct) ? winRef * (1.0 + pct * beta) : na
+    f_roundTick(raw)
+
+
+// ============================================================================
+// 3) NÍVEIS GEX DO EWZ
+//    Marque/desmarque cada nível e informe o strike/preço ORIGINAL do EWZ.
+// ============================================================================
+
+groupGex = "3. Níveis GEX do EWZ"
+
+showTeto = input.bool(true, "", inline = "teto", group = groupGex)
+gexTeto = input.float(0.0, "Call/Put teto", minval = 0.0, step = 0.01, inline = "teto", group = groupGex)
+
+showCall2 = input.bool(true, "", inline = "cw2", group = groupGex)
+gexCall2 = input.float(0.0, "Call Wall 2", minval = 0.0, step = 0.01, inline = "cw2", group = groupGex)
+
+showCall1 = input.bool(true, "", inline = "cw1", group = groupGex)
+gexCall1 = input.float(0.0, "Call Wall 1", minval = 0.0, step = 0.01, inline = "cw1", group = groupGex)
+
+showGammaRes = input.bool(true, "", inline = "gres", group = groupGex)
+gexGammaRes = input.float(0.0, "Gamma resistência", minval = 0.0, step = 0.01, inline = "gres", group = groupGex)
+
+showGammaFlip = input.bool(true, "", inline = "gflip", group = groupGex)
+gexGammaFlip = input.float(0.0, "Gamma Flip", minval = 0.0, step = 0.01, inline = "gflip", group = groupGex)
+
+showGammaSup = input.bool(true, "", inline = "gsup", group = groupGex)
+gexGammaSup = input.float(0.0, "Gamma suporte", minval = 0.0, step = 0.01, inline = "gsup", group = groupGex)
+
+showPut2 = input.bool(true, "", inline = "pw2", group = groupGex)
+gexPut2 = input.float(0.0, "Put Wall 2", minval = 0.0, step = 0.01, inline = "pw2", group = groupGex)
+
+showPutFloor = input.bool(true, "", inline = "pwf", group = groupGex)
+gexPutFloor = input.float(0.0, "Put Wall chão", minval = 0.0, step = 0.01, inline = "pwf", group = groupGex)
+
+
+// ============================================================================
+// 4) VISUAL
+// ============================================================================
+
+groupVisual = "4. Visual"
+
+showLabels = input.bool(true, "Mostrar nomes e preços nas linhas", group = groupVisual)
+labelOffset = input.int(2, "Deslocamento dos rótulos (barras)", minval = 0, maxval = 50, group = groupVisual)
+
+showTable = input.bool(true, "Mostrar painel", group = groupVisual)
+
+showFlipRegime = input.bool(
+     true,
+     "Destacar acima/abaixo do Gamma Flip",
+     group = groupVisual,
+     tooltip = "É apenas uma referência visual em relação ao nível projetado do Gamma Flip; não equivale, isoladamente, a uma leitura completa de gamma positivo/negativo."
+)
+
+recentOnly = input.bool(
+     false,
+     "Exibir somente barras recentes",
+     group = groupVisual,
+     tooltip = "Útil para evitar a falsa impressão de que os níveis GEX atuais existiam em todo o histórico."
+)
+
+recentDays = input.int(
+     3,
+     "Dias corridos exibidos",
+     minval = 1,
+     maxval = 30,
+     group = groupVisual
+)
+
+bool inDisplayWindow = not recentOnly or time >= timenow - recentDays * 24 * 60 * 60 * 1000
+
+
+// ============================================================================
+// 5) PROJEÇÕES
+// ============================================================================
+
+pTeto = f_project(gexTeto)
+pCall2 = f_project(gexCall2)
+pCall1 = f_project(gexCall1)
+pGammaRes = f_project(gexGammaRes)
+pGammaFlip = f_project(gexGammaFlip)
+pGammaSup = f_project(gexGammaSup)
+pPut2 = f_project(gexPut2)
+pPutFloor = f_project(gexPutFloor)
+
+vTeto = showTeto and inDisplayWindow ? pTeto : na
+vCall2 = showCall2 and inDisplayWindow ? pCall2 : na
+vCall1 = showCall1 and inDisplayWindow ? pCall1 : na
+vGammaRes = showGammaRes and inDisplayWindow ? pGammaRes : na
+vGammaFlip = showGammaFlip and inDisplayWindow ? pGammaFlip : na
+vGammaSup = showGammaSup and inDisplayWindow ? pGammaSup : na
+vPut2 = showPut2 and inDisplayWindow ? pPut2 : na
+vPutFloor = showPutFloor and inDisplayWindow ? pPutFloor : na
+
+
+// ============================================================================
+// 6) LINHAS
+// ============================================================================
+
+plot(vTeto, "Call/Put teto", color = color.red, linewidth = 2, style = plot.style_linebr)
+plot(vCall2, "Call Wall 2", color = color.new(color.red, 25), linewidth = 2, style = plot.style_linebr)
+plot(vCall1, "Call Wall 1", color = color.orange, linewidth = 2, style = plot.style_linebr)
+plot(vGammaRes, "Gamma resistência", color = color.fuchsia, linewidth = 2, style = plot.style_linebr)
+plot(vGammaFlip, "Gamma Flip", color = color.yellow, linewidth = 3, style = plot.style_linebr)
+plot(vGammaSup, "Gamma suporte", color = color.aqua, linewidth = 2, style = plot.style_linebr)
+plot(vPut2, "Put Wall 2", color = color.new(color.green, 25), linewidth = 2, style = plot.style_linebr)
+plot(vPutFloor, "Put Wall chão", color = color.green, linewidth = 3, style = plot.style_linebr)
+
+bgcolor(
+     showFlipRegime and not na(vGammaFlip)
+         ? close >= vGammaFlip
+             ? color.new(color.green, 93)
+             : color.new(color.red, 93)
+         : na,
+     title = "Regime relativo ao Gamma Flip"
+)
+
+
+// ============================================================================
+// 7) RÓTULOS
+// ============================================================================
+
+f_updateLabel(label id, float y, string levelName, color c) =>
+    label out = id
+    if barstate.islast
+        if showLabels and not na(y)
+            string txt = levelName + "  " + str.tostring(y, format.mintick)
+            if na(out)
+                out := label.new(
+                     bar_index + labelOffset,
+                     y,
+                     txt,
+                     xloc = xloc.bar_index,
+                     style = label.style_label_left,
+                     color = color.new(c, 10),
+                     textcolor = color.white,
+                     size = size.small
+                )
+            else
+                label.set_xy(out, bar_index + labelOffset, y)
+                label.set_text(out, txt)
+                label.set_color(out, color.new(c, 10))
+                label.set_textcolor(out, color.white)
+        else
+            if not na(out)
+                label.delete(out)
+            out := na
+    out
+
+var label lblTeto = na
+var label lblCall2 = na
+var label lblCall1 = na
+var label lblGammaRes = na
+var label lblGammaFlip = na
+var label lblGammaSup = na
+var label lblPut2 = na
+var label lblPutFloor = na
+
+lblTeto := f_updateLabel(lblTeto, vTeto, "Teto", color.red)
+lblCall2 := f_updateLabel(lblCall2, vCall2, "Call Wall 2", color.red)
+lblCall1 := f_updateLabel(lblCall1, vCall1, "Call Wall 1", color.orange)
+lblGammaRes := f_updateLabel(lblGammaRes, vGammaRes, "Gamma Resist.", color.fuchsia)
+lblGammaFlip := f_updateLabel(lblGammaFlip, vGammaFlip, "Gamma Flip", color.yellow)
+lblGammaSup := f_updateLabel(lblGammaSup, vGammaSup, "Gamma Suporte", color.aqua)
+lblPut2 := f_updateLabel(lblPut2, vPut2, "Put Wall 2", color.green)
+lblPutFloor := f_updateLabel(lblPutFloor, vPutFloor, "Put Wall chão", color.green)
+
+
+// ============================================================================
+// 8) PAINEL
+// ============================================================================
+
+f_fmtPrice(float x) =>
+    na(x) ? "—" : str.tostring(x, format.mintick)
+
+f_fmtPct(float x) =>
+    na(x) ? "—" : str.tostring(x * 100.0, "#.##") + "%"
+
+f_fmtDistPts(float projected) =>
+    na(projected) ? "—" : str.tostring(close - projected, format.mintick)
+
+f_fmtDistPct(float projected) =>
+    na(projected) or projected == 0 ? "—" : str.tostring((close / projected - 1.0) * 100.0, "#.##") + "%"
+
+var table panel = table.new(position.top_right, 6, 10, border_width = 1)
+
+f_row(int row, string name, float ewzLevel, float projected, color c) =>
+    table.cell(panel, 0, row, name, text_color = c)
+    table.cell(panel, 1, row, ewzLevel > 0 ? str.tostring(ewzLevel, "#.##") : "—")
+    table.cell(panel, 2, row, f_fmtPct(f_pctFromRef(ewzLevel)))
+    table.cell(panel, 3, row, f_fmtPrice(projected))
+    table.cell(panel, 4, row, f_fmtDistPts(projected))
+    table.cell(panel, 5, row, f_fmtDistPct(projected))
+
+if barstate.islast
+    table.clear(panel, 0, 0, 5, 9)
+
+    if showTable
+        table.cell(panel, 0, 0, "Nível")
+        table.cell(panel, 1, 0, "EWZ")
+        table.cell(panel, 2, 0, "Δ ref.")
+        table.cell(panel, 3, 0, "WIN")
+        table.cell(panel, 4, 0, "Dist. pts")
+        table.cell(panel, 5, 0, "Dist. %")
+
+        table.cell(panel, 0, 1, "Referência")
+        table.cell(panel, 1, 1, refOk ? str.tostring(ewzRef, "#.##") : "SEM DADO")
+        table.cell(panel, 2, 1, "0,00%")
+        table.cell(panel, 3, 1, refOk ? f_fmtPrice(winRef) : "SEM DADO")
+        table.cell(panel, 4, 1, "")
+        table.cell(
+             panel,
+             5,
+             1,
+             refMode == "Automática — fechamento NY" and not na(refTimeAuto)
+                 ? str.format_time(refTimeAuto, "dd/MM HH:mm", "America/Sao_Paulo")
+                 : "manual"
+        )
+
+        f_row(2, "Call/Put teto", gexTeto, pTeto, color.red)
+        f_row(3, "Call Wall 2", gexCall2, pCall2, color.red)
+        f_row(4, "Call Wall 1", gexCall1, pCall1, color.orange)
+        f_row(5, "Gamma Resist.", gexGammaRes, pGammaRes, color.fuchsia)
+        f_row(6, "Gamma Flip", gexGammaFlip, pGammaFlip, color.yellow)
+        f_row(7, "Gamma Suporte", gexGammaSup, pGammaSup, color.aqua)
+        f_row(8, "Put Wall 2", gexPut2, pPut2, color.green)
+        f_row(9, "Put Wall chão", gexPutFloor, pPutFloor, color.green)
+
+
+// ============================================================================
+// 9) ALERTAS
+// ============================================================================
+
+groupAlerts = "5. Alertas"
+
+proximityPct = input.float(
+     0.10,
+     "Zona de proximidade (%)",
+     minval = 0.01,
+     maxval = 5.0,
+     step = 0.01,
+     group = groupAlerts,
+     tooltip = "Ex.: 0,10 = alerta quando o preço fica a até 0,10% de algum nível."
+)
+
+f_near(float level) =>
+    not na(level) and math.abs(close / level - 1.0) * 100.0 <= proximityPct
+
+bool nearAny =
+     f_near(vTeto) or
+     f_near(vCall2) or
+     f_near(vCall1) or
+     f_near(vGammaRes) or
+     f_near(vGammaFlip) or
+     f_near(vGammaSup) or
+     f_near(vPut2) or
+     f_near(vPutFloor)
+
+alertcondition(nearAny and not nearAny[1], "WIN próximo de nível GEX", "O preço entrou na zona de proximidade de um nível GEX projetado do EWZ.")
+
+alertcondition(ta.cross(close, vTeto), "Cruzamento — Call/Put teto", "O preço cruzou o Call/Put teto projetado.")
+alertcondition(ta.cross(close, vCall2), "Cruzamento — Call Wall 2", "O preço cruzou o Call Wall 2 projetado.")
+alertcondition(ta.cross(close, vCall1), "Cruzamento — Call Wall 1", "O preço cruzou o Call Wall 1 projetado.")
+alertcondition(ta.cross(close, vGammaRes), "Cruzamento — Gamma resistência", "O preço cruzou a Gamma resistência projetada.")
+alertcondition(ta.cross(close, vGammaFlip), "Cruzamento — Gamma Flip", "O preço cruzou o Gamma Flip projetado.")
+alertcondition(ta.cross(close, vGammaSup), "Cruzamento — Gamma suporte", "O preço cruzou o Gamma suporte projetado.")
+alertcondition(ta.cross(close, vPut2), "Cruzamento — Put Wall 2", "O preço cruzou o Put Wall 2 projetado.")
+alertcondition(ta.cross(close, vPutFloor), "Cruzamento — Put Wall chão", "O preço cruzou o Put Wall chão projetado.")
