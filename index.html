@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Web portfólio comparativo de ferramentas para análise de opções, Gamma Exposure, Open Interest e níveis de mercado." />
+  <title>Ferramentas de Opções — Portfólio Comparativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="#top" aria-label="Ferramentas de Opções">
+        <span class="brand-mark">ƒ</span>
+        <span>Ferramentas de Opções</span>
+      </a>
+      <nav aria-label="Navegação principal">
+        <a href="#visao-geral">Visão geral</a>
+        <a href="#ferramentas">Ferramentas</a>
+        <a href="#comparativo">Comparativo</a>
+        <a href="#conclusoes">Conclusões</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">PORTFÓLIO TÉCNICO · OPÇÕES · GEX · OI</p>
+          <h1>Ferramentas de opções analisadas lado a lado</h1>
+          <p class="hero-copy">
+            Um inventário comparativo de soluções voltadas a Open Interest, Gamma Exposure,
+            níveis derivados de opções e projeção entre mercados. O objetivo é separar
+            claramente o que cada ferramenta <strong>mede</strong>, <strong>calcula</strong>,
+            <strong>visualiza</strong> e <strong>automatiza</strong>.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#comparativo">Ver comparação</a>
+            <a class="btn secondary" href="#ferramentas">Explorar ferramentas</a>
+          </div>
+        </div>
+        <aside class="hero-panel" aria-label="Resumo">
+          <div class="metric"><span>5</span><small>ferramentas mapeadas</small></div>
+          <div class="metric"><span>3</span><small>indicadores Pine</small></div>
+          <div class="metric"><span>2</span><small>aplicações externas</small></div>
+          <div class="metric"><span>1</span><small>objetivo: complementaridade</small></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="visao-geral" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">VISÃO GERAL</p>
+          <h2>Não são ferramentas equivalentes</h2>
+          <p>
+            Algumas soluções recebem níveis já calculados e apenas os desenham no TradingView.
+            Outras tentam produzir os dados a partir da cadeia de opções. Essa distinção é
+            essencial para uma comparação justa.
+          </p>
+        </div>
+
+        <div class="pipeline">
+          <article>
+            <span class="step">01</span>
+            <h3>Aquisição</h3>
+            <p>Coleta da cadeia de opções, spot, vencimentos, OI, volume e/ou gregas.</p>
+          </article>
+          <article>
+            <span class="step">02</span>
+            <h3>Cálculo</h3>
+            <p>OI nocional, GEX, walls, flip, Vanna, implied move e métricas derivadas.</p>
+          </article>
+          <article>
+            <span class="step">03</span>
+            <h3>Transporte</h3>
+            <p>Formatação dos resultados em uma string ou bloco copiável para o Pine.</p>
+          </article>
+          <article>
+            <span class="step">04</span>
+            <h3>Visualização</h3>
+            <p>Linhas, áreas, ladders, labels, painéis e alertas no gráfico.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="ferramentas" class="section alt">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">FERRAMENTAS</p>
+          <h2>O que cada projeto faz melhor</h2>
+        </div>
+
+        <div class="cards">
+          <article class="tool-card featured">
+            <div class="card-top">
+              <span class="badge">Projeto próprio</span>
+              <span class="tag">GUI + Pine</span>
+            </div>
+            <h3>EWZ GEX → WIN</h3>
+            <p class="lead">Pipeline portátil para transformar dados de opções do EWZ em níveis projetados no WIN.</p>
+            <ul>
+              <li>Aplicação desktop portátil com GUI.</li>
+              <li>Coleta e processamento da cadeia de opções do EWZ.</li>
+              <li>GEX agregado por strike.</li>
+              <li>Call Wall, Put Wall e Gamma Flip estimado.</li>
+              <li>Exportação em bloco único para o TradingView.</li>
+              <li>Conversão EWZ → WIN por referência sincronizada e beta opcional.</li>
+            </ul>
+            <p class="caveat"><strong>Ponto de atenção:</strong> a robustez da coleta depende da disponibilidade do provedor; o Gamma Flip local ainda deve ser validado contra a fonte de referência.</p>
+          </article>
+
+          <article class="tool-card featured">
+            <div class="card-top">
+              <span class="badge">Projeto próprio</span>
+              <span class="tag">WebApp</span>
+            </div>
+            <h3>Mapa de Opções</h3>
+            <p class="lead">Ferramenta voltada à leitura de liquidez e posicionamento por Open Interest, com ênfase em valor nocional e histórico.</p>
+            <ul>
+              <li>Cadeia NTM (aprox. ±10% do spot).</li>
+              <li>Strike, bid, ask, volume e Open Interest.</li>
+              <li>Notional Open Interest com multiplicador explícito.</li>
+              <li>Histórico por snapshots diários, sem retropreenchimento artificial.</li>
+              <li>Put/Call descritivo, sem tratar OI como direção líquida.</li>
+              <li>Separação entre mapa atual e histórico de toda a cadeia.</li>
+            </ul>
+            <p class="caveat"><strong>Ponto de atenção:</strong> OI alto não revela sozinho intenção direcional, origem institucional nem exposição líquida de dealers.</p>
+          </article>
+
+          <article class="tool-card">
+            <div class="card-top">
+              <span class="badge neutral">Referência externa</span>
+              <span class="tag">Pine v6</span>
+            </div>
+            <h3>quantedOptions Levels [qO]</h3>
+            <p class="lead">A referência visual mais sofisticada entre os indicadores analisados.</p>
+            <ul>
+              <li>Call/Put Wall, Gamma Flip, Gamma C/P e DEX C/P.</li>
+              <li>Top 5 strikes e perfil completo de GEX.</li>
+              <li>Ladder lateral proporcional ao net gamma por strike.</li>
+              <li>Zona sombreada entre as walls.</li>
+              <li>Conversão automática entre ETFs e futuros correlatos.</li>
+              <li>Uso de basis em pares índice futuro ↔ índice à vista.</li>
+            </ul>
+            <p class="caveat"><strong>Ponto de atenção:</strong> o Pine não calcula os níveis; recebe um snapshot externo pronto.</p>
+          </article>
+
+          <article class="tool-card">
+            <div class="card-top">
+              <span class="badge neutral">Referência externa</span>
+              <span class="tag">Pine v5</span>
+            </div>
+            <h3>Options Levels</h3>
+            <p class="lead">Indicador enxuto para plotar treze níveis pré-calculados com configuração simples.</p>
+            <ul>
+              <li>Call Wall, Put Wall e Gamma Flip.</li>
+              <li>Dark Gamma.</li>
+              <li>Cinco níveis Whale.</li>
+              <li>Upper σ1/σ2 e Lower σ1/σ2.</li>
+              <li>Grupos de visibilidade separados.</li>
+              <li>Alertas básicos de rompimento das walls.</li>
+            </ul>
+            <p class="caveat"><strong>Ponto forte:</strong> simplicidade. <strong>Limitação:</strong> depende integralmente de valores produzidos fora do script.</p>
+          </article>
+
+          <article class="tool-card">
+            <div class="card-top">
+              <span class="badge neutral">Referência externa</span>
+              <span class="tag">Pine v6</span>
+            </div>
+            <h3>Support & Resistance from Options Data</h3>
+            <p class="lead">O indicador mais amplo em métricas operacionais e alertas.</p>
+            <ul>
+              <li>17 valores por ticker em uma única string.</li>
+              <li>S1/R1, Implied Move, Put/Call Wall e Gamma Flip.</li>
+              <li>IV, Put/Call ratio, tendência e nível de atividade.</li>
+              <li>Walls de curto prazo e walls anteriores.</li>
+              <li>Vanna positiva/negativa e stop sugerido.</li>
+              <li>Alertas de proximidade, bounce, rejeição e rompimento.</li>
+            </ul>
+            <p class="caveat"><strong>Ponto de atenção:</strong> também depende de uma fonte externa rica para preencher a string de dados.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparativo" class="section">
+      <div class="wrap">
+        <div class="section-head row-head">
+          <div>
+            <p class="eyebrow">COMPARATIVO</p>
+            <h2>Matriz funcional</h2>
+          </div>
+          <div class="legend">
+            <span><i class="dot yes"></i> Sim / forte</span>
+            <span><i class="dot partial"></i> Parcial / depende</span>
+            <span><i class="dot no"></i> Não</span>
+          </div>
+        </div>
+
+        <div class="table-tools">
+          <label>
+            <span>Filtrar recursos</span>
+            <input id="featureSearch" type="search" placeholder="Ex.: Gamma, Vanna, histórico..." />
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table id="comparisonTable">
+            <thead>
+              <tr>
+                <th>Critério</th>
+                <th>EWZ GEX → WIN</th>
+                <th>Mapa de Opções</th>
+                <th>quantedOptions [qO]</th>
+                <th>Options Levels</th>
+                <th>Support & Resistance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th>Aquisição de dados</th><td data-state="yes">Automática, via app</td><td data-state="yes">WebApp / provedor</td><td data-state="partial">Externa ao Pine</td><td data-state="no">Não</td><td data-state="partial">Externa ao Pine</td></tr>
+              <tr><th>GUI própria</th><td data-state="yes">Desktop portátil</td><td data-state="yes">Dashboard web</td><td data-state="no">Não no código fornecido</td><td data-state="no">Não</td><td data-state="no">Não no código fornecido</td></tr>
+              <tr><th>Open Interest</th><td data-state="yes">Usado no GEX</td><td data-state="yes">Métrica central</td><td data-state="partial">Recebe perfil pronto</td><td data-state="partial">Indireto</td><td data-state="partial">Origem externa</td></tr>
+              <tr><th>Notional Open Interest</th><td data-state="no">Não é foco</td><td data-state="yes">Métrica central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Histórico por snapshots</th><td data-state="partial">Previsto/registrável</td><td data-state="yes">Sim, por desenho metodológico</td><td data-state="no">Snapshot atual</td><td data-state="no">Não</td><td data-state="partial">Walls anteriores</td></tr>
+              <tr><th>Call / Put Wall</th><td data-state="yes">Sim</td><td data-state="no">Não como foco atual</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Gamma Flip</th><td data-state="partial">Estimativa local</td><td data-state="no">Não implementado</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
+              <tr><th>GEX por strike</th><td data-state="yes">Calculado no app</td><td data-state="no">Não</td><td data-state="yes">Perfil importado</td><td data-state="no">Não</td><td data-state="no">Não no Pine</td></tr>
+              <tr><th>Ladder / perfil lateral</th><td data-state="partial">Pode evoluir</td><td data-state="no">Não</td><td data-state="yes">Excelente</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>DEX</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">DEX C/P</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Vanna</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Vanna ±</td></tr>
+              <tr><th>Implied Move</th><td data-state="no">Não</td><td data-state="no">Não como requisito central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th>IV</th><td data-state="partial">Disponível na cadeia, não central</td><td data-state="partial">Pode ser incorporada</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Put/Call ratio</th><td data-state="partial">Pode ser calculado</td><td data-state="yes">Descritivo</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Whale / Top strikes</th><td data-state="partial">Picos secundários</td><td data-state="partial">Concentração por strike</td><td data-state="yes">Top 5</td><td data-state="yes">Whale 1–5</td><td data-state="no">Não nesse formato</td></tr>
+              <tr><th>Níveis σ</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">σ1 / σ2</td><td data-state="no">Não</td></tr>
+              <tr><th>Conversão ETF → futuro</th><td data-state="yes">EWZ → WIN</td><td data-state="no">Não</td><td data-state="yes">Vários pares</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Alertas avançados</th><td data-state="partial">Cruzamento/proximidade</td><td data-state="no">Não é foco</td><td data-state="partial">Walls/Flip</td><td data-state="partial">Básicos</td><td data-state="yes">Mais completo</td></tr>
+              <tr><th>Transporte por bloco único</th><td data-state="yes">Sim</td><td data-state="no">Não se aplica</td><td data-state="yes">Sim</td><td data-state="yes">Lista única</td><td data-state="yes">Sim</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusoes" class="section alt">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">CONCLUSÕES</p>
+          <h2>As ferramentas são mais complementares do que concorrentes</h2>
+        </div>
+
+        <div class="conclusions">
+          <article>
+            <h3>Melhor aquisição e automação</h3>
+            <p><strong>EWZ GEX → WIN</strong> tem a arquitetura mais orientada a eliminar trabalho manual: app externo, processamento e exportação para Pine.</p>
+          </article>
+          <article>
+            <h3>Melhor visão de OI</h3>
+            <p><strong>Mapa de Opções</strong> é o projeto mais adequado para responder “onde está a liquidez e como o tamanho nocional evolui?”.</p>
+          </article>
+          <article>
+            <h3>Melhor visualização GEX</h3>
+            <p><strong>quantedOptions [qO]</strong> oferece a representação gráfica mais rica do perfil de strikes e da conversão entre mercados.</p>
+          </article>
+          <article>
+            <h3>Melhor simplicidade</h3>
+            <p><strong>Options Levels</strong> é o mais direto: uma lista de treze valores entra; treze níveis saem.</p>
+          </article>
+          <article>
+            <h3>Melhor camada operacional</h3>
+            <p><strong>Support & Resistance</strong> tem a cobertura mais ampla de alertas, IV, Vanna, implied move e eventos de toque/rompimento.</p>
+          </article>
+        </div>
+
+        <div class="roadmap">
+          <div>
+            <p class="eyebrow">ROADMAP RECOMENDADO</p>
+            <h2>Um projeto integrado pode reunir o melhor dos cinco</h2>
+          </div>
+          <ol>
+            <li><strong>Coleta:</strong> preservar a aplicação externa para cadeia de opções e dados brutos.</li>
+            <li><strong>Histórico:</strong> adotar snapshots e proveniência do Mapa de Opções.</li>
+            <li><strong>Motor:</strong> calcular GEX, Walls, Flip e, quando metodologicamente sustentado, DEX/Vanna/IV.</li>
+            <li><strong>Transporte:</strong> usar uma string versionada e autocontida para copiar/colar.</li>
+            <li><strong>Pine:</strong> incorporar ladder, zona entre walls, agrupamento de níveis e alertas avançados.</li>
+            <li><strong>Validação:</strong> nunca tratar OI ou GEX isoladamente como direção garantida de mercado.</li>
+          </ol>
+        </div>
+
+        <div class="method-note">
+          <h3>Nota metodológica</h3>
+          <p>
+            O portfólio distingue dados observados, métricas calculadas e heurísticas. Open Interest representa contratos em aberto,
+            não fluxo líquido ou “posição institucional” identificável. Do mesmo modo, níveis derivados de GEX dependem da convenção
+            de cálculo e da qualidade da cadeia recebida.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-grid">
+      <div>
+        <strong>Ferramentas de Opções</strong>
+        <p>Portfólio técnico comparativo.</p>
+      </div>
+      <a href="#top">Voltar ao topo ↑</a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
