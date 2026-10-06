@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Mapa de Opções — ficha técnica no banco de dados Ferramentas de Opções." />
+  <title>Mapa de Opções — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ficha">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../../index.html#ferramentas">← Voltar ao catálogo</a>
+        <div class="detail-kicker"><span class="badge">Projeto próprio</span><span class="tag">WebApp</span></div>
+        <h1>Mapa de Opções</h1>
+        <p class="hero-copy">WebApp para análise da cadeia de opções, Open Interest, concentração por strike e evolução do Notional Open Interest.</p>
+        <div class="detail-summary">É a ferramenta mais adequada do catálogo para análise estrutural e histórica de Open Interest. Seu desenho metodológico evita tratar OI de calls como fluxo comprador ou direção líquida.</div>
+        <div class="detail-highlights"><div><strong>OI</strong><span>métrica central</span></div><div><strong>Snapshots</strong><span>histórico correto</span></div><div><strong>NTM</strong><span>mapa próximo ao spot</span></div></div>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap detail-layout">
+        <aside class="detail-toc">
+          <strong>Nesta ficha</strong>
+          <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#visualizacao">Visualização</a>
+          <a href="#automacao">Automação</a><a href="#limitacoes">Limitações</a><a href="#codigo">Código-fonte</a><a href="#comparacao">Comparação</a>
+        </aside>
+        <div class="detail-content">
+          <article id="objetivo" class="detail-block"><p class="eyebrow">OBJETIVO</p><h2>Para que serve</h2><p>Transformar a cadeia de opções de ativos como EWZ em um painel de liquidez e posicionamento observável: onde estão os contratos, quais strikes concentram OI e como o tamanho nocional evolui ao longo do tempo.</p></article>
+          <article id="input" class="detail-block"><p class="eyebrow">INPUT</p><h2>Dados de entrada</h2><p>Spot do ativo, cadeia de calls e puts, vencimentos, strikes, bid, ask, último preço, volume, Open Interest, multiplicador e metadados de fonte/data econômica. O projeto revisado prevê importação validada e coletores externos.</p></article>
+          <article id="calculos" class="detail-block"><p class="eyebrow">CÁLCULOS</p><h2>O que a ferramenta calcula</h2><ul><li>Filtro Near-The-Money configurável.</li><li>Notional OI baseado em OI × multiplicador × preço do ativo da mesma data econômica.</li><li>Put/Call descritivo por OI ou volume.</li><li>Agregações por strike e vencimento.</li><li>Histórico construído exclusivamente a partir de snapshots reais preservados.</li></ul></article>
+          <article id="visualizacao" class="detail-block"><p class="eyebrow">VISUALIZAÇÃO</p><h2>Como apresenta os resultados</h2><ul><li>Dashboard web responsivo.</li><li>Tabela de opções com filtros e paginação.</li><li>Concentração de OI por strike.</li><li>Matriz strike × vencimento.</li><li>Série temporal de Notional OI separada do mapa corrente.</li></ul></article>
+          <article id="automacao" class="detail-block"><p class="eyebrow">AUTOMAÇÃO</p><h2>Quanto trabalho manual permanece</h2><p><strong>Média/alta conforme a fonte.</strong> A arquitetura prevê coletores/API e armazenamento de snapshots. A disponibilidade real depende de uma fonte com cobertura e direitos de uso adequados; dados históricos de OI não devem ser inventados a partir da cadeia atual.</p></article>
+          <article id="limitacoes" class="detail-block"><p class="eyebrow">LIMITAÇÕES</p><h2>O que não deve ser inferido</h2><ul><li>Open Interest não revela sozinho comprador, vendedor ou intenção institucional.</li><li>Notional OI bruto não é prêmio pago, risco de perda nem exposição ajustada por delta.</li><li>Dados atuais não reconstroem posições históricas.</li><li>Fontes gratuitas podem não garantir OI histórico, cobertura ou estabilidade.</li></ul></article>
+          <article id="codigo" class="detail-block"><p class="eyebrow">CÓDIGO-FONTE</p><h2>Arquivos preservados no banco</h2><div class="resource-list"><a class="resource-link" href="README.md"><span>Ficha do catálogo</span><small>Resumo do projeto no banco</small></a><a class="resource-link" href="https://github.com/pablopcdossantos2-sys/mapa-de-opcoes"><span>Repositório relacionado</span><small>Projeto externo ao catálogo</small></a></div></article>
+          <article id="comparacao" class="detail-block"><p class="eyebrow">COMPARAÇÃO</p><h2>Posição no ecossistema</h2><p>É complementar ao <strong>EWZ — Mapa de Opções em Aberto</strong>: o WebApp cuida melhor de aquisição, persistência e histórico; o Pine leva um snapshot estrutural para dentro do gráfico. Em comparação com ferramentas de GEX, trabalha com informação mais próxima do dado bruto e evita derivar Walls/Flip sem metodologia específica.</p><p class="detail-cta"><a class="btn secondary" href="../../index.html#comparativo">Abrir matriz comparativa completa</a></p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="../../index.html#ferramentas">Catálogo ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
