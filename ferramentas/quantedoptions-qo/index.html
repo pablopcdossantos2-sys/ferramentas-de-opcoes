@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="quantedOptions Levels [qO] — ficha técnica no banco de dados Ferramentas de Opções." />
+  <title>quantedOptions Levels [qO] — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ficha">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../../index.html#ferramentas">← Voltar ao catálogo</a>
+        <div class="detail-kicker"><span class="badge">Referência externa</span><span class="tag">Pine v6</span></div>
+        <h1>quantedOptions Levels [qO]</h1>
+        <p class="hero-copy">Indicador Pine v6 para visualização avançada de Walls, Gamma/DEX, top strikes, ladder de exposição e conversão entre instrumentos correlatos.</p>
+        <div class="detail-summary">É a principal referência visual do catálogo. O indicador não calcula a cadeia: recebe um snapshot já processado e transforma esse pacote em uma leitura rica no TradingView.</div>
+        <div class="detail-highlights"><div><strong>GEX + DEX</strong><span>níveis importados</span></div><div><strong>Top 5</strong><span>strikes destacados</span></div><div><strong>Ladder</strong><span>perfil lateral</span></div></div>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap detail-layout">
+        <aside class="detail-toc">
+          <strong>Nesta ficha</strong>
+          <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#visualizacao">Visualização</a>
+          <a href="#automacao">Automação</a><a href="#limitacoes">Limitações</a><a href="#codigo">Código-fonte</a><a href="#comparacao">Comparação</a>
+        </aside>
+        <div class="detail-content">
+          <article id="objetivo" class="detail-block"><p class="eyebrow">OBJETIVO</p><h2>Para que serve</h2><p>Transformar um snapshot produzido por quantedOptions/quantedGamma em níveis e perfil de exposição legíveis em qualquer gráfico compatível, incluindo proxies como ETF → futuro.</p></article>
+          <article id="input" class="detail-block"><p class="eyebrow">INPUT</p><h2>Dados de entrada</h2><p>String versionada no formato <code>qo1|TICKER|DATA|HORA|SPOT|COHORT|...</code>, contendo net gamma, Call/Put Wall, Gamma Flip, Gamma C/P, DEX C/P, top strikes e perfil por strike.</p></article>
+          <article id="calculos" class="detail-block"><p class="eyebrow">CÁLCULOS</p><h2>O que a ferramenta calcula</h2><ul><li>Parsing do pacote externo.</li><li>Conversão de níveis por razão de preços para vários pares ETF/futuro.</li><li>Uso de basis em relações índice à vista → futuro quando apropriado.</li><li>Escalonamento do perfil para desenhar o ladder.</li><li>Agrupamento visual de níveis coincidentes.</li></ul></article>
+          <article id="visualizacao" class="detail-block"><p class="eyebrow">VISUALIZAÇÃO</p><h2>Como apresenta os resultados</h2><ul><li>Call/Put Wall e Gamma Flip.</li><li>Gamma C/P e DEX C/P.</li><li>Top 5 strikes.</li><li>Zona sombreada entre Walls.</li><li>Ladder lateral com largura proporcional ao net GEX por strike.</li><li>Header com ticker, coorte, spot, data/hora e estado da conversão.</li></ul></article>
+          <article id="automacao" class="detail-block"><p class="eyebrow">AUTOMAÇÃO</p><h2>Quanto trabalho manual permanece</h2><p><strong>Média.</strong> O uso no TradingView é simples — copiar o snapshot e colar — mas a aquisição e o cálculo dos níveis dependem de um gerador externo que não faz parte do Pine preservado.</p></article>
+          <article id="limitacoes" class="detail-block"><p class="eyebrow">LIMITAÇÕES</p><h2>O que não deve ser inferido</h2><ul><li>Snapshot precisa ser colado novamente para atualizar.</li><li>A validade dos níveis depende do gerador externo.</li><li>Conversões por ratio/basis são aproximações estruturais, não identidade econômica perfeita.</li><li>O indicador não substitui o pipeline de aquisição de dados.</li></ul></article>
+          <article id="codigo" class="detail-block"><p class="eyebrow">CÓDIGO-FONTE</p><h2>Arquivos preservados no banco</h2><div class="resource-list"><a class="resource-link" href="source/quantedOptions_Levels_qO.pine"><span>quantedOptions_Levels_qO.pine</span><small>Código-fonte recebido para análise</small></a><a class="resource-link" href="README.md"><span>README da ferramenta</span><small>Resumo no catálogo</small></a></div></article>
+          <article id="comparacao" class="detail-block"><p class="eyebrow">COMPARAÇÃO</p><h2>Posição no ecossistema</h2><p>Supera os demais indicadores em <strong>visualização GEX e conversão entre proxies</strong>. O <strong>EWZ GEX → WIN</strong> é mais forte na proposta de aquisição/automação; o <strong>Support & Resistance</strong> possui alertas mais amplos; o <strong>EWZ Mapa OI</strong> preserva mais informação primária da cadeia.</p><p class="detail-cta"><a class="btn secondary" href="../../index.html#comparativo">Abrir matriz comparativa completa</a></p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="../../index.html#ferramentas">Catálogo ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
