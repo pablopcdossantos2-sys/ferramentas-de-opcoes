@@ -8,6 +8,7 @@ Reunir, em uma única interface, uma visão técnica e comparativa das seguintes
 
 - **EWZ GEX → WIN** — aplicação portátil com GUI + indicador Pine para coletar/formatar dados de GEX do EWZ e projetá-los no WIN.
 - **Mapa de Opções** — aplicação voltada a Open Interest, Notional OI, histórico e matriz strike × vencimento.
+- **EWZ — Mapa de Opções em Aberto** — indicador Pine que recebe séries de opções, agrega OI por faixas de strike e calcula valor por prêmio, nocional pelo strike e P/C OI.
 - **quantedOptions Levels [qO]** — indicador Pine voltado à visualização de Call/Put Wall, Gamma Flip, Gamma/DEX e perfil de strikes.
 - **Options Levels** — indicador Pine simples para 13 níveis pré-calculados, incluindo Walls, Gamma Flip, Whales e sigmas.
 - **Support and Resistance levels from Options Data** — indicador Pine com 17 métricas por ticker, incluindo IV, Vanna, Implied Move, Walls e alertas avançados.
@@ -19,10 +20,20 @@ Reunir, em uma única interface, uma visão técnica e comparativa das seguintes
 ├── index.html
 ├── styles.css
 ├── app.js
+├── ferramentas/
+│   ├── README.md
+│   ├── catalogo.json
+│   └── <uma pasta por ferramenta>/
 └── .github/
     └── workflows/
         └── pages.yml
 ```
+
+## Banco de dados de ferramentas
+
+A pasta `ferramentas/` funciona como acervo do projeto. Códigos recebidos na conversa são preservados em subpastas próprias, junto com fichas de análise. O arquivo `ferramentas/catalogo.json` mantém um índice legível por máquina.
+
+A regra adotada daqui em diante é: **toda nova ferramenta de opções analisada deve ser catalogada no repositório e incluída no web-portfólio.**
 
 ## Executar localmente
 
