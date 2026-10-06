@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Pipeline voltado a obter dados de opções do EWZ, derivar níveis de Gamma Exposure e projetá-los no WIN para uso no TradingView." />
+  <title>EWZ GEX → WIN — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../index.html#ferramentas"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ferramenta">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../index.html#ferramentas">← Voltar ao catálogo</a>
+        <p class="eyebrow">APLICAÇÃO + PINE · GEX · PROJEÇÃO</p>
+        <h1>EWZ GEX → WIN</h1>
+        <p class="hero-copy">Pipeline voltado a obter dados de opções do EWZ, derivar níveis de Gamma Exposure e projetá-los no WIN para uso no TradingView.</p>
+        <div class="detail-tags"><span class="tag">GUI portátil</span><span class="tag">Pine v6</span><span class="tag">GEX</span><span class="tag">EWZ → WIN</span></div>
+      </div>
+    </section>
+
+    <div class="wrap detail-layout">
+      <aside class="detail-toc">
+        <strong>Nesta página</strong>
+        <a href="#objetivo">Objetivo</a>
+        <a href="#input">Input</a>
+        <a href="#calculos">Cálculos</a>
+        <a href="#visualizacao">Visualização</a>
+        <a href="#automacao">Automação</a>
+        <a href="#limitacoes">Limitações</a>
+        <a href="#codigo">Código-fonte</a>
+        <a href="#comparacao">Comparação</a>
+      </aside>
+
+      <article class="detail-content">
+        <section id="objetivo" class="detail-section"><h2>Objetivo</h2><p>Reduzir o processo manual de leitura do Gamma Exposure do EWZ e transformar os níveis em referências operacionais no WIN, mantendo o cálculo e a coleta fora das limitações do Pine Script.</p></section>
+        <section id="input" class="detail-section"><h2>Input</h2><ul><li>Cadeia de opções do EWZ obtida pelo coletor externo.</li><li>Preço/referência do EWZ e referência sincronizada do WIN.</li><li>Bloco de níveis exportado pela aplicação para colagem no indicador Pine.</li></ul></section>
+        <section id="calculos" class="detail-section"><h2>Cálculos</h2><ul><li>GEX agregado por strike.</li><li>Call Wall e Put Wall a partir das concentrações relevantes.</li><li>Gamma Flip/níveis correlatos em implementação própria, ainda sujeito a validação contra a fonte de referência.</li><li>Conversão EWZ → WIN por variação percentual em relação a referências sincronizadas, com beta opcional.</li></ul></section>
+        <section id="visualizacao" class="detail-section"><h2>Visualização</h2><ul><li>Linhas projetadas no gráfico do WIN.</li><li>Rótulos de níveis e painel de distâncias.</li><li>Destaque relativo ao Gamma Flip.</li><li>Alertas de cruzamento e proximidade.</li></ul></section>
+        <section id="automacao" class="detail-section"><h2>Automação</h2><p>Alta em comparação com os indicadores puramente manuais: a aplicação externa foi desenhada para automatizar coleta, cálculo e formatação. A confiabilidade final depende da estabilidade e das permissões do provedor de dados.</p></section>
+        <section id="limitacoes" class="detail-section"><h2>Limitações</h2><ul><li>O Pine não acessa arbitrariamente a página/API do provedor; a coleta fica fora do TradingView.</li><li>O Gamma Flip local precisa de validação metodológica contra uma referência confiável.</li><li>EWZ e WIN não são instrumentos equivalentes; a projeção 1:1 ou por beta deve ser tratada como modelo, não identidade econômica.</li></ul></section>
+        <section id="codigo" class="detail-section"><h2>Código-fonte</h2><p>Arquivos e referências preservados no banco de dados do projeto:</p><div class="source-list"><a class="source-link" href="../ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"><span>Código Pine preservado</span><span aria-hidden="true">↗</span></a></div></section>
+        <section id="comparacao" class="detail-section"><h2>Comparação</h2><div class="compare-list"><article><h3>vs. Mapa de Opções</h3><p>Mais forte em GEX/projeção; menos focado em histórico de OI nocional.</p></article><article><h3>vs. EWZ Mapa OI</h3><p>Trabalha com métricas derivadas; o Mapa OI expõe o dado bruto por faixa.</p></article><article><h3>vs. quantedOptions</h3><p>Tem aquisição própria planejada; o qO é mais maduro na visualização do perfil e na conversão entre vários proxies.</p></article><article><h3>vs. Support &amp; Resistance</h3><p>Tem melhor pipeline EWZ→WIN; o outro possui mais métricas operacionais e alertas.</p></article></div></section>
+      </article>
+    </div>
+
+    <section class="tool-switcher">
+      <div class="wrap switcher-grid">
+        <a href="support-resistance-options-data.html"><small>← Ferramenta anterior</small><strong>Support &amp; Resistance levels from Options Data</strong></a>
+        <a href="../index.html#comparativo"><small>Matriz geral</small><strong>Comparar todas</strong></a>
+        <a href="mapa-de-opcoes.html"><small>Próxima ferramenta →</small><strong>Mapa de Opções</strong></a>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Biblioteca técnica comparativa.</p></div><a href="../index.html">Página inicial</a></div></footer>
+  <script src="../app.js"></script>
+</body>
+</html>
