@@ -1,6 +1,13 @@
 # Ferramentas de Opções — Web Portfólio
 
-Web portfólio comparativo das ferramentas relacionadas a opções analisadas ao longo do projeto.
+Repositório de desenvolvimento e pesquisa sobre ferramentas de opções. O objetivo principal é desenvolver o **EWZ GEX → WIN**; o web-portfólio e o banco de dados de outras ferramentas existem como suporte de pesquisa e comparação.
+
+## Prioridades do projeto
+
+1. **Objetivo principal — EWZ GEX → WIN:** desenvolver a ferramenta inspirada na metodologia discutida no início da conversa, em que níveis de Gamma Exposure do EWZ são usados como referência e projetados para o WIN.
+2. **Objetivo secundário — biblioteca de referências:** reunir, preservar e analisar outras ferramentas baseadas em opções, OI, GEX, Walls, Vanna, DEX, sigmas e conceitos relacionados, com a finalidade de compreender diferentes abordagens e identificar melhorias futuras para o projeto principal.
+
+As ferramentas do catálogo **não possuem a mesma prioridade de desenvolvimento**. Salvo indicação posterior, alterações de produto devem favorecer primeiro o EWZ GEX → WIN.
 
 ## Objetivo
 
