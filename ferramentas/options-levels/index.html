@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Options Levels — ficha técnica no banco de dados Ferramentas de Opções." />
+  <title>Options Levels — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ficha">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../../index.html#ferramentas">← Voltar ao catálogo</a>
+        <div class="detail-kicker"><span class="badge">Referência externa</span><span class="tag">Pine v5</span></div>
+        <h1>Options Levels</h1>
+        <p class="hero-copy">Indicador Pine v5 enxuto para desenhar treze níveis pré-calculados de estrutura de opções.</p>
+        <div class="detail-summary">É a ferramenta mais simples do catálogo: recebe uma lista posicional de 13 preços e os transforma em linhas, rótulos e dois alertas básicos.</div>
+        <div class="detail-highlights"><div><strong>13</strong><span>níveis fixos</span></div><div><strong>5</strong><span>Whale levels</span></div><div><strong>σ1/σ2</strong><span>desvios</span></div></div>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap detail-layout">
+        <aside class="detail-toc">
+          <strong>Nesta ficha</strong>
+          <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#visualizacao">Visualização</a>
+          <a href="#automacao">Automação</a><a href="#limitacoes">Limitações</a><a href="#codigo">Código-fonte</a><a href="#comparacao">Comparação</a>
+        </aside>
+        <div class="detail-content">
+          <article id="objetivo" class="detail-block"><p class="eyebrow">OBJETIVO</p><h2>Para que serve</h2><p>Permitir que um usuário transporte rapidamente níveis calculados fora do TradingView para o gráfico, sem precisar configurar cada linha individualmente.</p></article>
+          <article id="input" class="detail-block"><p class="eyebrow">INPUT</p><h2>Dados de entrada</h2><p>Uma lista com 13 valores na ordem: Call Wall, Put Wall, Gamma Flip, Dark Gamma, Whale 1–5, Upper σ1/σ2 e Lower σ1/σ2.</p></article>
+          <article id="calculos" class="detail-block"><p class="eyebrow">CÁLCULOS</p><h2>O que a ferramenta calcula</h2><p>O script não calcula os níveis de opções. Sua lógica principal é parsing da lista, associação posicional de nomes/cores e definição de comprimentos relativos das linhas.</p></article>
+          <article id="visualizacao" class="detail-block"><p class="eyebrow">VISUALIZAÇÃO</p><h2>Como apresenta os resultados</h2><ul><li>Treze linhas horizontais com rótulos.</li><li>Cores e emojis por categoria.</li><li>Grupos de visibilidade para críticos, Whales e sigmas.</li><li>Extensão configurável das linhas para a direita.</li></ul></article>
+          <article id="automacao" class="detail-block"><p class="eyebrow">AUTOMAÇÃO</p><h2>Quanto trabalho manual permanece</h2><p><strong>Baixa.</strong> Os treze números precisam ser produzidos externamente e colados no campo do indicador. Depois disso, a renderização é automática.</p></article>
+          <article id="limitacoes" class="detail-block"><p class="eyebrow">LIMITAÇÕES</p><h2>O que não deve ser inferido</h2><ul><li>Sem aquisição ou validação de cadeia.</li><li>Dependência total da ordem correta da lista.</li><li>Sem histórico, GEX por strike, DEX, Vanna ou conversão entre mercados.</li><li>Alertas limitados a cruzamento de Call Wall e Put Wall.</li></ul></article>
+          <article id="codigo" class="detail-block"><p class="eyebrow">CÓDIGO-FONTE</p><h2>Arquivos preservados no banco</h2><div class="resource-list"><a class="resource-link" href="source/Options_Levels.pine"><span>Options_Levels.pine</span><small>Código-fonte recebido para análise</small></a><a class="resource-link" href="README.md"><span>README da ferramenta</span><small>Resumo no catálogo</small></a></div></article>
+          <article id="comparacao" class="detail-block"><p class="eyebrow">COMPARAÇÃO</p><h2>Posição no ecossistema</h2><p>É a melhor opção quando o objetivo é <strong>simplicidade de transporte e plotagem</strong>. Em troca, oferece muito menos contexto do que qO ou Support & Resistance e não carrega os dados primários encontrados no EWZ Mapa OI.</p><p class="detail-cta"><a class="btn secondary" href="../../index.html#comparativo">Abrir matriz comparativa completa</a></p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="../../index.html#ferramentas">Catálogo ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
