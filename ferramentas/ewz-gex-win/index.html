@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="EWZ GEX → WIN — ficha técnica no banco de dados Ferramentas de Opções." />
+  <title>EWZ GEX → WIN — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ficha">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../../index.html#ferramentas">← Voltar ao catálogo</a>
+        <div class="detail-kicker"><span class="badge">Projeto próprio</span><span class="tag">GUI + Pine</span></div>
+        <h1>EWZ GEX → WIN</h1>
+        <p class="hero-copy">Aplicação externa + Pine Script para transformar a estrutura de Gamma Exposure do EWZ em níveis projetados sobre o WIN.</p>
+        <div class="detail-summary">É a ferramenta mais orientada à automação e à ponte entre mercados do catálogo. A proposta é coletar a cadeia do EWZ fora do Pine, calcular níveis derivados e entregar um bloco pronto para colar no TradingView.</div>
+        <div class="detail-highlights"><div><strong>EWZ → WIN</strong><span>conversão entre mercados</span></div><div><strong>GEX</strong><span>métrica central</span></div><div><strong>GUI</strong><span>coleta e exportação</span></div></div>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap detail-layout">
+        <aside class="detail-toc">
+          <strong>Nesta ficha</strong>
+          <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#visualizacao">Visualização</a>
+          <a href="#automacao">Automação</a><a href="#limitacoes">Limitações</a><a href="#codigo">Código-fonte</a><a href="#comparacao">Comparação</a>
+        </aside>
+        <div class="detail-content">
+          <article id="objetivo" class="detail-block"><p class="eyebrow">OBJETIVO</p><h2>Para que serve</h2><p>Reduzir o processo manual de consultar dados de opções do EWZ, identificar níveis relevantes e transferi-los para o gráfico do mini-índice brasileiro. O Pine funciona como camada de visualização; a aplicação externa concentra aquisição e preparação dos dados.</p></article>
+          <article id="input" class="detail-block"><p class="eyebrow">INPUT</p><h2>Dados de entrada</h2><p>A aplicação depende de uma cadeia de opções do EWZ com strikes, tipo de opção, Open Interest e gamma ou campos suficientes para calcular a exposição. O indicador recebe um bloco estruturado exportado pela aplicação, além de referências de preço para a conversão EWZ → WIN.</p></article>
+          <article id="calculos" class="detail-block"><p class="eyebrow">CÁLCULOS</p><h2>O que a ferramenta calcula</h2><ul><li>Gamma Exposure agregado por strike.</li><li>Call Wall e Put Wall a partir das concentrações de exposição.</li><li>Gamma Flip como nível derivado/estimado no protótipo atual.</li><li>Variação percentual dos níveis do EWZ em relação à referência sincronizada.</li><li>Projeção dessa variação no WIN, com modelo 1:1 ou beta ajustável.</li></ul></article>
+          <article id="visualizacao" class="detail-block"><p class="eyebrow">VISUALIZAÇÃO</p><h2>Como apresenta os resultados</h2><ul><li>Linhas horizontais para níveis projetados.</li><li>Rótulos de preço e nome dos níveis.</li><li>Painel com nível original do EWZ, variação e nível projetado no WIN.</li><li>Destaque relativo ao Gamma Flip e alertas de aproximação/cruzamento.</li></ul></article>
+          <article id="automacao" class="detail-block"><p class="eyebrow">AUTOMAÇÃO</p><h2>Quanto trabalho manual permanece</h2><p><strong>Alta, mas condicionada ao provedor.</strong> A meta é reduzir a rotina para “Atualizar dados → Copiar bloco → Colar no TradingView”. A coleta automática precisa ser robusta contra mudanças e restrições do provedor de dados.</p></article>
+          <article id="limitacoes" class="detail-block"><p class="eyebrow">LIMITAÇÕES</p><h2>O que não deve ser inferido</h2><ul><li>O Gamma Flip do protótipo deve ser validado contra uma metodologia de referência.</li><li>EWZ e WIN não são instrumentos idênticos; câmbio, composição e basis podem alterar a relação.</li><li>A qualidade do resultado depende integralmente da cadeia recebida.</li><li>Níveis de GEX são referência de estrutura de opções, não sinal garantido de direção.</li></ul></article>
+          <article id="codigo" class="detail-block"><p class="eyebrow">CÓDIGO-FONTE</p><h2>Arquivos preservados no banco</h2><div class="resource-list"><a class="resource-link" href="source/EWZ_GEX_WIN_Pro.pine"><span>EWZ_GEX_WIN_Pro.pine</span><small>Indicador Pine preservado no repositório</small></a><a class="resource-link" href="README.md"><span>README da ferramenta</span><small>Resumo técnico e estado do protótipo</small></a></div></article>
+          <article id="comparacao" class="detail-block"><p class="eyebrow">COMPARAÇÃO</p><h2>Posição no ecossistema</h2><p>É mais automatizado do que os indicadores que recebem níveis prontos e é o único do catálogo desenhado especificamente para <strong>EWZ → WIN</strong>. O <strong>quantedOptions [qO]</strong> é hoje mais sofisticado na visualização de perfil/ladder e conversões genéricas entre proxies; o <strong>Support & Resistance</strong> é mais rico em alertas e métricas operacionais.</p><p class="detail-cta"><a class="btn secondary" href="../../index.html#comparativo">Abrir matriz comparativa completa</a></p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="../../index.html#ferramentas">Catálogo ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
