@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -23,7 +23,8 @@
       "source": [
         "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
       ],
-      "status": "protótipo"
+      "status": "protótipo",
+      "page": "paginas/ewz-gex-win.html"
     },
     {
       "id": "mapa-de-opcoes",
@@ -41,7 +42,8 @@
       "tradingview": false,
       "automation": "média/alta conforme fonte",
       "source_repo": "https://github.com/pablopcdossantos2-sys/mapa-de-opcoes",
-      "status": "documentado / implementação externa ao catálogo"
+      "status": "documentado / implementação externa ao catálogo",
+      "page": "paginas/mapa-de-opcoes.html"
     },
     {
       "id": "ewz-mapa-opcoes-oi",
@@ -63,7 +65,8 @@
         "ferramentas/ewz-mapa-opcoes-oi/source/EWZ_Mapa_Opcoes.pine",
         "ferramentas/ewz-mapa-opcoes-oi/GUIA.md"
       ],
-      "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia"
+      "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia",
+      "page": "paginas/ewz-mapa-opcoes-oi.html"
     },
     {
       "id": "quantedoptions-qo",
@@ -84,7 +87,8 @@
       "source": [
         "ferramentas/quantedoptions-qo/source/quantedOptions_Levels_qO.pine"
       ],
-      "status": "código recebido para análise"
+      "status": "código recebido para análise",
+      "page": "paginas/quantedoptions-qo.html"
     },
     {
       "id": "options-levels",
@@ -105,7 +109,8 @@
       "source": [
         "ferramentas/options-levels/source/Options_Levels.pine"
       ],
-      "status": "código recebido para análise"
+      "status": "código recebido para análise",
+      "page": "paginas/options-levels.html"
     },
     {
       "id": "support-resistance-options-data",
@@ -128,7 +133,8 @@
       "source": [
         "ferramentas/support-resistance-options-data/source/Support_and_Resistance_levels_from_Options_Data.pine"
       ],
-      "status": "código recebido para análise"
+      "status": "código recebido para análise",
+      "page": "paginas/support-resistance-options-data.html"
     }
   ]
 }
