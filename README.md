@@ -24,6 +24,8 @@ Reunir, em uma única interface, uma visão técnica e comparativa das seguintes
 │   ├── README.md
 │   ├── catalogo.json
 │   └── <uma pasta por ferramenta>/
+├── paginas/
+│   └── <uma página HTML por ferramenta>/
 └── .github/
     └── workflows/
         └── pages.yml
@@ -34,6 +36,21 @@ Reunir, em uma única interface, uma visão técnica e comparativa das seguintes
 A pasta `ferramentas/` funciona como acervo do projeto. Códigos recebidos na conversa são preservados em subpastas próprias, junto com fichas de análise. O arquivo `ferramentas/catalogo.json` mantém um índice legível por máquina.
 
 A regra adotada daqui em diante é: **toda nova ferramenta de opções analisada deve ser catalogada no repositório e incluída no web-portfólio.**
+
+## Páginas individuais
+
+Cada ferramenta possui uma ficha HTML navegável em `paginas/`, com estrutura fixa:
+
+- Objetivo
+- Input
+- Cálculos
+- Visualização
+- Automação
+- Limitações
+- Código-fonte
+- Comparação
+
+Os cards da página inicial apontam diretamente para essas fichas, e cada ficha permite navegar para a anterior, para a próxima e para a matriz comparativa geral.
 
 ## Executar localmente
 
