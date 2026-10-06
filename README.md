@@ -33,7 +33,7 @@ Reunir, em uma única interface, uma visão técnica e comparativa das seguintes
 
 ## Banco de dados de ferramentas
 
-A pasta `ferramentas/` funciona como acervo do projeto. Códigos recebidos na conversa são preservados em subpastas próprias, junto com fichas de análise. O arquivo `ferramentas/catalogo.json` mantém um índice legível por máquina.
+A pasta `ferramentas/` funciona como acervo do projeto. Códigos recebidos na conversa são preservados em subpastas próprias, junto com fichas de análise. Cada ferramenta agora possui também uma página HTML individual navegável com seções padronizadas de Objetivo, Input, Cálculos, Visualização, Automação, Limitações, Código-fonte e Comparação. O arquivo `ferramentas/catalogo.json` mantém um índice legível por máquina.
 
 A regra adotada daqui em diante é: **toda nova ferramenta de opções analisada deve ser catalogada no repositório e incluída no web-portfólio.**
 
