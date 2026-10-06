@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Indicador enxuto que recebe uma lista fixa de treze preços e desenha níveis críticos, Whales e bandas sigma." />
+  <title>Options Levels — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../index.html#ferramentas"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ferramenta">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../index.html#ferramentas">← Voltar ao catálogo</a>
+        <p class="eyebrow">PINE V5 · 13 NÍVEIS · SIMPLICIDADE</p>
+        <h1>Options Levels</h1>
+        <p class="hero-copy">Indicador enxuto que recebe uma lista fixa de treze preços e desenha níveis críticos, Whales e bandas sigma.</p>
+        <div class="detail-tags"><span class="tag">Pine v5</span><span class="tag">13 níveis</span><span class="tag">Whales</span><span class="tag">σ1/σ2</span></div>
+      </div>
+    </section>
+
+    <div class="wrap detail-layout">
+      <aside class="detail-toc">
+        <strong>Nesta página</strong>
+        <a href="#objetivo">Objetivo</a>
+        <a href="#input">Input</a>
+        <a href="#calculos">Cálculos</a>
+        <a href="#visualizacao">Visualização</a>
+        <a href="#automacao">Automação</a>
+        <a href="#limitacoes">Limitações</a>
+        <a href="#codigo">Código-fonte</a>
+        <a href="#comparacao">Comparação</a>
+      </aside>
+
+      <article class="detail-content">
+        <section id="objetivo" class="detail-section"><h2>Objetivo</h2><p>Oferecer uma forma direta de transportar um conjunto padronizado de níveis externos para o gráfico, com pouca configuração e leitura visual imediata.</p></section>
+        <section id="input" class="detail-section"><h2>Input</h2><ul><li>Lista única com 13 valores na ordem Call Wall, Put Wall, Gamma Flip, Dark Gamma, Whale 1–5, Upper σ1/σ2 e Lower σ1/σ2.</li></ul></section>
+        <section id="calculos" class="detail-section"><h2>Cálculos</h2><ul><li>Não calcula os níveis: apenas faz parsing da lista.</li><li>Aplica comprimentos visuais diferentes conforme a importância definida no código.</li></ul></section>
+        <section id="visualizacao" class="detail-section"><h2>Visualização</h2><ul><li>Linhas horizontais com cores e emojis.</li><li>Grupos de visibilidade para níveis críticos, Whales e sigmas.</li><li>Extensão opcional à direita e labels configuráveis.</li></ul></section>
+        <section id="automacao" class="detail-section"><h2>Automação</h2><p>Baixa: depende de o usuário obter e colar os treze níveis prontos.</p></section>
+        <section id="limitacoes" class="detail-section"><h2>Limitações</h2><ul><li>Não preserva metadados como data, ticker, fonte ou timestamp.</li><li>Não recebe perfil de strikes nem OI bruto.</li><li>Alertas limitados a cruzamento de Call Wall e Put Wall no código analisado.</li></ul></section>
+        <section id="codigo" class="detail-section"><h2>Código-fonte</h2><p>Arquivos e referências preservados no banco de dados do projeto:</p><div class="source-list"><a class="source-link" href="../ferramentas/options-levels/source/Options_Levels.pine"><span>Código Pine preservado</span><span aria-hidden="true">↗</span></a><a class="source-link" href="../ferramentas/options-levels/README.md"><span>Ficha no catálogo</span><span aria-hidden="true">↗</span></a></div></section>
+        <section id="comparacao" class="detail-section"><h2>Comparação</h2><div class="compare-list"><article><h3>vs. qO</h3><p>Muito mais simples; perde perfil, DEX e conversão proxy, mas é fácil de operar.</p></article><article><h3>vs. Support &amp; Resistance</h3><p>Menos campos e lógica; não trabalha com IV, Vanna, implied move ou alertas avançados.</p></article><article><h3>vs. EWZ Mapa OI</h3><p>Transporta níveis finais, não séries de opções.</p></article></div></section>
+      </article>
+    </div>
+
+    <section class="tool-switcher">
+      <div class="wrap switcher-grid">
+        <a href="quantedoptions-qo.html"><small>← Ferramenta anterior</small><strong>quantedOptions Levels [qO]</strong></a>
+        <a href="../index.html#comparativo"><small>Matriz geral</small><strong>Comparar todas</strong></a>
+        <a href="support-resistance-options-data.html"><small>Próxima ferramenta →</small><strong>Support &amp; Resistance levels from Options Data</strong></a>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Biblioteca técnica comparativa.</p></div><a href="../index.html">Página inicial</a></div></footer>
+  <script src="../app.js"></script>
+</body>
+</html>
