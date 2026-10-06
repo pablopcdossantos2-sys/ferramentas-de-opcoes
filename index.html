@@ -34,7 +34,7 @@
           <p class="eyebrow">PORTFÓLIO TÉCNICO · OPÇÕES · GEX · OI</p>
           <h1>Ferramentas de opções analisadas lado a lado</h1>
           <p class="hero-copy">
-            Um inventário comparativo de soluções voltadas a Open Interest, Gamma Exposure,
+            Um inventário comparativo e um banco de dados de soluções voltadas a Open Interest, Gamma Exposure,
             níveis derivados de opções e projeção entre mercados. O objetivo é separar
             claramente o que cada ferramenta <strong>mede</strong>, <strong>calcula</strong>,
             <strong>visualiza</strong> e <strong>automatiza</strong>.
@@ -45,8 +45,8 @@
           </div>
         </div>
         <aside class="hero-panel" aria-label="Resumo">
-          <div class="metric"><span>5</span><small>ferramentas mapeadas</small></div>
-          <div class="metric"><span>3</span><small>indicadores Pine</small></div>
+          <div class="metric"><span>6</span><small>ferramentas mapeadas</small></div>
+          <div class="metric"><span>4</span><small>indicadores Pine</small></div>
           <div class="metric"><span>2</span><small>aplicações externas</small></div>
           <div class="metric"><span>1</span><small>objetivo: complementaridade</small></div>
         </aside>
@@ -134,6 +134,25 @@
             <p class="caveat"><strong>Ponto de atenção:</strong> OI alto não revela sozinho intenção direcional, origem institucional nem exposição líquida de dealers.</p>
           </article>
 
+          <article class="tool-card featured">
+            <div class="card-top">
+              <span class="badge">Ferramenta catalogada</span>
+              <span class="tag">Pine v6</span>
+            </div>
+            <h3>EWZ — Mapa de Opções em Aberto</h3>
+            <p class="lead">Snapshot de OI por faixas de strike no próprio gráfico do EWZ, com valores financeiros e razão Put/Call.</p>
+            <ul>
+              <li>Entrada por série: vencimento, tipo, strike, OI, prêmio e multiplicador.</li>
+              <li>Agregação por faixas de strike configuráveis.</li>
+              <li>OI de calls/puts e razão P/C OI.</li>
+              <li>Valor pelo prêmio e nocional pelo strike.</li>
+              <li>Validação de datas, duplicatas, OI, prêmio e multiplicador.</li>
+              <li>Boxes coloridos por predominância de calls/puts e painel paginado.</li>
+            </ul>
+            <p class="caveat"><strong>Ponto de atenção:</strong> os dados são manuais e estáticos; não calcula GEX/Walls e não reconstrói histórico.</p>
+          </article>
+
+
           <article class="tool-card">
             <div class="card-top">
               <span class="badge neutral">Referência externa</span>
@@ -219,31 +238,34 @@
                 <th>Critério</th>
                 <th>EWZ GEX → WIN</th>
                 <th>Mapa de Opções</th>
+                <th>EWZ Mapa OI</th>
                 <th>quantedOptions [qO]</th>
                 <th>Options Levels</th>
                 <th>Support & Resistance</th>
               </tr>
             </thead>
             <tbody>
-              <tr><th>Aquisição de dados</th><td data-state="yes">Automática, via app</td><td data-state="yes">WebApp / provedor</td><td data-state="partial">Externa ao Pine</td><td data-state="no">Não</td><td data-state="partial">Externa ao Pine</td></tr>
-              <tr><th>GUI própria</th><td data-state="yes">Desktop portátil</td><td data-state="yes">Dashboard web</td><td data-state="no">Não no código fornecido</td><td data-state="no">Não</td><td data-state="no">Não no código fornecido</td></tr>
-              <tr><th>Open Interest</th><td data-state="yes">Usado no GEX</td><td data-state="yes">Métrica central</td><td data-state="partial">Recebe perfil pronto</td><td data-state="partial">Indireto</td><td data-state="partial">Origem externa</td></tr>
-              <tr><th>Notional Open Interest</th><td data-state="no">Não é foco</td><td data-state="yes">Métrica central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>Histórico por snapshots</th><td data-state="partial">Previsto/registrável</td><td data-state="yes">Sim, por desenho metodológico</td><td data-state="no">Snapshot atual</td><td data-state="no">Não</td><td data-state="partial">Walls anteriores</td></tr>
-              <tr><th>Call / Put Wall</th><td data-state="yes">Sim</td><td data-state="no">Não como foco atual</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
-              <tr><th>Gamma Flip</th><td data-state="partial">Estimativa local</td><td data-state="no">Não implementado</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
-              <tr><th>GEX por strike</th><td data-state="yes">Calculado no app</td><td data-state="no">Não</td><td data-state="yes">Perfil importado</td><td data-state="no">Não</td><td data-state="no">Não no Pine</td></tr>
-              <tr><th>Ladder / perfil lateral</th><td data-state="partial">Pode evoluir</td><td data-state="no">Não</td><td data-state="yes">Excelente</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>DEX</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">DEX C/P</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>Vanna</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Vanna ±</td></tr>
-              <tr><th>Implied Move</th><td data-state="no">Não</td><td data-state="no">Não como requisito central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
-              <tr><th>IV</th><td data-state="partial">Disponível na cadeia, não central</td><td data-state="partial">Pode ser incorporada</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
-              <tr><th>Put/Call ratio</th><td data-state="partial">Pode ser calculado</td><td data-state="yes">Descritivo</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
-              <tr><th>Whale / Top strikes</th><td data-state="partial">Picos secundários</td><td data-state="partial">Concentração por strike</td><td data-state="yes">Top 5</td><td data-state="yes">Whale 1–5</td><td data-state="no">Não nesse formato</td></tr>
-              <tr><th>Níveis σ</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">σ1 / σ2</td><td data-state="no">Não</td></tr>
-              <tr><th>Conversão ETF → futuro</th><td data-state="yes">EWZ → WIN</td><td data-state="no">Não</td><td data-state="yes">Vários pares</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>Alertas avançados</th><td data-state="partial">Cruzamento/proximidade</td><td data-state="no">Não é foco</td><td data-state="partial">Walls/Flip</td><td data-state="partial">Básicos</td><td data-state="yes">Mais completo</td></tr>
-              <tr><th>Transporte por bloco único</th><td data-state="yes">Sim</td><td data-state="no">Não se aplica</td><td data-state="yes">Sim</td><td data-state="yes">Lista única</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Aquisição de dados</th><td data-state="yes">Automática, via app</td><td data-state="yes">WebApp / provedor</td><td data-state="no">Entrada manual</td><td data-state="partial">Externa ao Pine</td><td data-state="no">Não</td><td data-state="partial">Externa ao Pine</td></tr>
+              <tr><th>GUI própria</th><td data-state="yes">Desktop portátil</td><td data-state="yes">Dashboard web</td><td data-state="no">TradingView apenas</td><td data-state="no">Não no código fornecido</td><td data-state="no">Não</td><td data-state="no">Não no código fornecido</td></tr>
+              <tr><th>Open Interest</th><td data-state="yes">Usado no GEX</td><td data-state="yes">Métrica central</td><td data-state="yes">Métrica central por faixa</td><td data-state="partial">Recebe perfil pronto</td><td data-state="partial">Indireto</td><td data-state="partial">Origem externa</td></tr>
+              <tr><th>Notional Open Interest</th><td data-state="no">Não é foco</td><td data-state="yes">Métrica central</td><td data-state="yes">Nocional pelo strike</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Valor por prêmio × OI</th><td data-state="no">Não é foco</td><td data-state="partial">Pode ser derivado</td><td data-state="yes">Métrica nativa</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Histórico por snapshots</th><td data-state="partial">Previsto/registrável</td><td data-state="yes">Sim, por desenho metodológico</td><td data-state="no">Snapshot estático</td><td data-state="no">Snapshot atual</td><td data-state="no">Não</td><td data-state="partial">Walls anteriores</td></tr>
+              <tr><th>Validação/proveniência do input</th><td data-state="partial">Depende do coletor</td><td data-state="yes">Preserva fonte/snapshot</td><td data-state="yes">Data OI, fonte, duplicatas, NA e calendário</td><td data-state="partial">Formato versionado</td><td data-state="partial">Lista posicional</td><td data-state="partial">Timestamp global</td></tr>
+              <tr><th>Call / Put Wall</th><td data-state="yes">Sim</td><td data-state="no">Não como foco atual</td><td data-state="no">Não calcula</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Gamma Flip</th><td data-state="partial">Estimativa local</td><td data-state="no">Não implementado</td><td data-state="no">Não</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
+              <tr><th>GEX por strike</th><td data-state="yes">Calculado no app</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Perfil importado</td><td data-state="no">Não</td><td data-state="no">Não no Pine</td></tr>
+              <tr><th>Perfil visual por strike/faixa</th><td data-state="partial">Pode evoluir</td><td data-state="yes">Concentração/matriz</td><td data-state="yes">Faixas coloridas por OI</td><td data-state="yes">Ladder excelente</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>DEX</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">DEX C/P</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Vanna</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Vanna ±</td></tr>
+              <tr><th>Implied Move</th><td data-state="no">Não</td><td data-state="no">Não como requisito central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th>IV</th><td data-state="partial">Disponível na cadeia, não central</td><td data-state="partial">Pode ser incorporada</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Put/Call ratio</th><td data-state="partial">Pode ser calculado</td><td data-state="yes">Descritivo</td><td data-state="yes">P/C de OI</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th>Whale / Top strikes</th><td data-state="partial">Picos secundários</td><td data-state="partial">Concentração por strike</td><td data-state="partial">Concentração visível por faixa</td><td data-state="yes">Top 5</td><td data-state="yes">Whale 1–5</td><td data-state="no">Não nesse formato</td></tr>
+              <tr><th>Níveis σ</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">σ1 / σ2</td><td data-state="no">Não</td></tr>
+              <tr><th>Conversão ETF → futuro</th><td data-state="yes">EWZ → WIN</td><td data-state="no">Não</td><td data-state="no">EWZ apenas</td><td data-state="yes">Vários pares</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th>Alertas avançados</th><td data-state="partial">Cruzamento/proximidade</td><td data-state="no">Não é foco</td><td data-state="no">Não possui</td><td data-state="partial">Walls/Flip</td><td data-state="partial">Básicos</td><td data-state="yes">Mais completo</td></tr>
+              <tr><th>Transporte por bloco único</th><td data-state="yes">Sim</td><td data-state="partial">Importação estruturada</td><td data-state="yes">Bloco multilinha</td><td data-state="yes">Sim</td><td data-state="yes">Lista única</td><td data-state="yes">Sim</td></tr>
             </tbody>
           </table>
         </div>
@@ -267,6 +289,10 @@
             <p><strong>Mapa de Opções</strong> é o projeto mais adequado para responder “onde está a liquidez e como o tamanho nocional evolui?”.</p>
           </article>
           <article>
+            <h3>Melhor snapshot de OI no gráfico</h3>
+            <p><strong>EWZ — Mapa de Opções em Aberto</strong> é a forma mais transparente de levar OI bruto, valores e P/C por faixa diretamente ao TradingView.</p>
+          </article>
+          <article>
             <h3>Melhor visualização GEX</h3>
             <p><strong>quantedOptions [qO]</strong> oferece a representação gráfica mais rica do perfil de strikes e da conversão entre mercados.</p>
           </article>
@@ -283,7 +309,7 @@
         <div class="roadmap">
           <div>
             <p class="eyebrow">ROADMAP RECOMENDADO</p>
-            <h2>Um projeto integrado pode reunir o melhor dos cinco</h2>
+            <h2>Um projeto integrado pode reunir o melhor dos seis</h2>
           </div>
           <ol>
             <li><strong>Coleta:</strong> preservar a aplicação externa para cadeia de opções e dados brutos.</li>
