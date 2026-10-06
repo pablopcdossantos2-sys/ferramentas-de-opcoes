@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-06",
+  "tools": [
+    {
+      "id": "ewz-gex-win",
+      "name": "EWZ GEX → WIN",
+      "type": [
+        "desktop-gui",
+        "pine"
+      ],
+      "focus": [
+        "gamma-exposure",
+        "call-wall",
+        "put-wall",
+        "gamma-flip",
+        "EWZ",
+        "WIN"
+      ],
+      "data_acquisition": "aplicação externa / coletor",
+      "tradingview": true,
+      "automation": "alta, condicionada ao provedor",
+      "source": [
+        "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
+      ],
+      "status": "protótipo"
+    },
+    {
+      "id": "mapa-de-opcoes",
+      "name": "Mapa de Opções",
+      "type": [
+        "webapp"
+      ],
+      "focus": [
+        "open-interest",
+        "notional-open-interest",
+        "options-chain",
+        "history"
+      ],
+      "data_acquisition": "coletores/API + importação",
+      "tradingview": false,
+      "automation": "média/alta conforme fonte",
+      "source_repo": "https://github.com/pablopcdossantos2-sys/mapa-de-opcoes",
+      "status": "documentado / implementação externa ao catálogo"
+    },
+    {
+      "id": "ewz-mapa-opcoes-oi",
+      "name": "EWZ — Mapa de Opções em Aberto",
+      "type": [
+        "pine"
+      ],
+      "focus": [
+        "open-interest",
+        "put-call-ratio",
+        "premium-value",
+        "strike-notional",
+        "EWZ"
+      ],
+      "data_acquisition": "entrada manual em texto",
+      "tradingview": true,
+      "automation": "baixa",
+      "source": [
+        "ferramentas/ewz-mapa-opcoes-oi/source/EWZ_Mapa_Opcoes.pine",
+        "ferramentas/ewz-mapa-opcoes-oi/GUIA.md"
+      ],
+      "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia"
+    },
+    {
+      "id": "quantedoptions-qo",
+      "name": "quantedOptions Levels [qO]",
+      "type": [
+        "pine"
+      ],
+      "focus": [
+        "gamma-exposure",
+        "delta-exposure",
+        "walls",
+        "strike-profile",
+        "proxy-conversion"
+      ],
+      "data_acquisition": "snapshot externo colado no Pine",
+      "tradingview": true,
+      "automation": "média, depende do gerador externo",
+      "source": [
+        "ferramentas/quantedoptions-qo/source/quantedOptions_Levels_qO.pine"
+      ],
+      "status": "código recebido para análise"
+    },
+    {
+      "id": "options-levels",
+      "name": "Options Levels",
+      "type": [
+        "pine"
+      ],
+      "focus": [
+        "walls",
+        "gamma-flip",
+        "dark-gamma",
+        "whale-levels",
+        "sigma-levels"
+      ],
+      "data_acquisition": "lista manual de 13 valores",
+      "tradingview": true,
+      "automation": "baixa",
+      "source": [
+        "ferramentas/options-levels/source/Options_Levels.pine"
+      ],
+      "status": "código recebido para análise"
+    },
+    {
+      "id": "support-resistance-options-data",
+      "name": "Support and Resistance levels from Options Data",
+      "type": [
+        "pine"
+      ],
+      "focus": [
+        "walls",
+        "gamma-flip",
+        "implied-move",
+        "iv",
+        "put-call-ratio",
+        "vanna",
+        "alerts"
+      ],
+      "data_acquisition": "string externa com 17 valores por ticker",
+      "tradingview": true,
+      "automation": "média, depende do gerador externo",
+      "source": [
+        "ferramentas/support-resistance-options-data/source/Support_and_Resistance_levels_from_Options_Data.pine"
+      ],
+      "status": "código recebido para análise"
+    }
+  ]
+}
