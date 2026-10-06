@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="EWZ — Mapa de Opções em Aberto — ficha técnica no banco de dados Ferramentas de Opções." />
+  <title>EWZ — Mapa de Opções em Aberto — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação da ficha">
+        <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#comparacao">Comparação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero">
+      <div class="wrap">
+        <a class="back-link" href="../../index.html#ferramentas">← Voltar ao catálogo</a>
+        <div class="detail-kicker"><span class="badge">Ferramenta catalogada</span><span class="tag">Pine v6</span></div>
+        <h1>EWZ — Mapa de Opções em Aberto</h1>
+        <p class="hero-copy">Indicador Pine v6 que agrega séries de opções do EWZ em faixas de strike e mostra OI, P/C e valores financeiros no gráfico.</p>
+        <div class="detail-summary">É a ferramenta mais transparente para levar um snapshot de Open Interest bruto ao TradingView. Em vez de receber Walls prontas, recebe séries de opções e constrói agregações visuais por faixa.</div>
+        <div class="detail-highlights"><div><strong>6 campos</strong><span>por série de opção</span></div><div><strong>OI</strong><span>calls e puts por faixa</span></div><div><strong>P/C</strong><span>razão de OI</span></div></div>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap detail-layout">
+        <aside class="detail-toc">
+          <strong>Nesta ficha</strong>
+          <a href="#objetivo">Objetivo</a><a href="#input">Input</a><a href="#calculos">Cálculos</a><a href="#visualizacao">Visualização</a>
+          <a href="#automacao">Automação</a><a href="#limitacoes">Limitações</a><a href="#codigo">Código-fonte</a><a href="#comparacao">Comparação</a>
+        </aside>
+        <div class="detail-content">
+          <article id="objetivo" class="detail-block"><p class="eyebrow">OBJETIVO</p><h2>Para que serve</h2><p>Mostrar a distribuição do estoque de contratos abertos do EWZ diretamente no TradingView, preservando data de referência, prêmio, multiplicador e ausência de dados.</p></article>
+          <article id="input" class="detail-block"><p class="eyebrow">INPUT</p><h2>Dados de entrada</h2><p>Uma série por linha no formato <code>vencimento;tipo;strike;oi;premio;multiplicador</code>. O prêmio pode ser <code>NA</code> quando indisponível. Há também data de referência do OI, identificação da fonte e filtros de vencimento.</p></article>
+          <article id="calculos" class="detail-block"><p class="eyebrow">CÁLCULOS</p><h2>O que a ferramenta calcula</h2><ul><li>OI de calls e puts por faixa de strike.</li><li>P/C OI = OI put ÷ OI call.</li><li>Valor pelo prêmio = Σ(OI × prêmio × multiplicador).</li><li>Nocional pelo strike = Σ(OI × strike × multiplicador).</li><li>Totais após filtros, com preservação de N/D quando a soma financeira seria incompleta.</li></ul></article>
+          <article id="visualizacao" class="detail-block"><p class="eyebrow">VISUALIZAÇÃO</p><h2>Como apresenta os resultados</h2><ul><li>Faixas horizontais à direita da última vela.</li><li>Predominância de calls em laranja e puts em azul, com mistura proporcional.</li><li>Intensidade visual relacionada ao OI total da faixa.</li><li>Quadro paginado com OI e valores em USD.</li><li>Marca da faixa que contém o último preço.</li></ul></article>
+          <article id="automacao" class="detail-block"><p class="eyebrow">AUTOMAÇÃO</p><h2>Quanto trabalho manual permanece</h2><p><strong>Baixa.</strong> A cadeia é colada manualmente. O movimento do EWZ não atualiza OI nem prêmios e o indicador não enumera automaticamente a cadeia de opções. É, porém, um excelente destino para uma futura exportação automática do coletor do projeto.</p></article>
+          <article id="limitacoes" class="detail-block"><p class="eyebrow">LIMITAÇÕES</p><h2>O que não deve ser inferido</h2><ul><li>Snapshot estático: não reconstrói histórico nem Replay.</li><li>Não calcula GEX, DEX, Vanna, Walls ou Gamma Flip.</li><li>Não projeta níveis para WIN.</li><li>OI e valores calculados não equivalem a volume negociado, margem ou exposição líquida.</li><li>O guia original registra que a compilação/renderização final no TradingView ainda exigia validação naquele ambiente.</li></ul></article>
+          <article id="codigo" class="detail-block"><p class="eyebrow">CÓDIGO-FONTE</p><h2>Arquivos preservados no banco</h2><div class="resource-list"><a class="resource-link" href="source/EWZ_Mapa_Opcoes.pine"><span>EWZ_Mapa_Opcoes.pine</span><small>Código-fonte recebido</small></a><a class="resource-link" href="GUIA.md"><span>Guia_EWZ_Mapa_Opcoes.md</span><small>Documentação de uso preservada</small></a><a class="resource-link" href="ANALISE.md"><span>ANALISE.md</span><small>Avaliação comparativa no catálogo</small></a></div></article>
+          <article id="comparacao" class="detail-block"><p class="eyebrow">COMPARAÇÃO</p><h2>Posição no ecossistema</h2><p>É o par natural do <strong>Mapa de Opções</strong>: um pode fornecer a aquisição/histórico e o outro a visualização do snapshot no gráfico. Em relação ao <strong>EWZ GEX → WIN</strong>, trabalha com OI e valor financeiro sem derivar exposição gamma. Em relação ao <strong>qO</strong>, é menos sofisticado em gregas, mas mais explícito sobre dados brutos, multiplicador e ausência de prêmio.</p><p class="detail-cta"><a class="btn secondary" href="../../index.html#comparativo">Abrir matriz comparativa completa</a></p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="../../index.html#ferramentas">Catálogo ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
