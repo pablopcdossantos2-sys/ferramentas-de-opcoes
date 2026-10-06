@@ -1,0 +1,561 @@
+//@version=6
+indicator("Support and Resistance levels from Options Data", "🍀Options Levels v3.1 [smartcanvas]", overlay=true)
+
+// ░██████╗███╗░░░███╗░█████╗░██████╗░████████╗░█████╗░░█████╗░███╗░░██║██╗░░░██╗░█████╗░░██████╗
+// ██╔════╝████╗░████║██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔══██╗████╗░██║██║░░░██║██╔══██╗██╔════╝
+// ╚█████╗░██╔████╔██║███████║██████╔╝░░░██║░░░██║░░╚═╝███████║██╔██╗██║╚██╗░██╔╝███████║╚█████╗░
+// ░╚═══██╗██║╚██╔╝██║██╔══██║██╔══██╗░░░██║░░░██║░░██╗██╔══██║██║╚████║░╚████╔╝░██╔══██║░╚═══██╗
+// ██████╔╝██║░╚═╝░██║██║░░██║██║░░██║░░░██║░░░╚█████╔╝██║░░██║██║░╚███║░░╚██╔╝░░██║░░██║██████╔╝
+// ╚═════╝░╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝╚═════╝░
+
+
+// Input for pasting custom level data from an external source.
+custom_level_data = input.string("", "Custom Level Data", tooltip="Paste the level data string here", display=display.none)
+
+// The custom_level_data string follows this format:
+// TICKER1:val0,val1,val2,...,val16;TICKER2:val0,val1,val2,...,val16;...;TIMESTAMP:unix_timestamp;
+// Where:
+// - Each ticker's data starts with "TICKER:" (e.g., "AAPL:") followed by exactly 17 comma-separated float values, ended by a semicolon.
+// - The values represent (in order):
+//   0: S1 (support level)
+//   1: R1 (resistance level)
+//   2: Implied move (absolute price value)
+//   3: Put Wall (gamma support)
+//   4: Call Wall (gamma resistance)
+//   5: Gamma Flip level
+//   6: IV (implied volatility in %)
+//   7: C/P ratio (call/put ratio)
+//   8: Trend (% change, e.g., in call wall)
+//   9: Options activity level (0-4: Very Low to Very High)
+//   10: Short-term Put Wall
+//   11: Short-term Call Wall
+//   12: Previous short-term Put Wall
+//   13: Previous short-term Call Wall
+//   14: Positive Vanna level
+//   15: Negative Vanna level
+//   16: Suggested Stop Loss level
+// - The string ends with "TIMESTAMP:" followed by a Unix timestamp (integer seconds since epoch).
+// - No spaces, newlines, or extra characters; the code cleans the input automatically.
+// Example: "AAPL:100.0,110.0,5.0,95.0,115.0,105.0,25.0,1.2,0.5,3,94.0,116.0,93.0,117.0,120.0,90.0,92.0;TIMESTAMP:1725148800;"
+
+// Clean the raw input string by removing whitespace and newline characters.
+data_no_newlines = str.replace_all(custom_level_data, "\n", "")
+data_no_carriage_returns = str.replace_all(data_no_newlines, "\r", "")
+data_no_tabs = str.replace_all(data_no_carriage_returns, "\t", "")
+cleaned_data = str.replace_all(data_no_tabs, " ", "")
+
+// Store the cleaned data in a variable that updates on each bar to ensure fresh evaluation.
+level_data_to_use = cleaned_data != "" ? cleaned_data : ""
+
+// Track changes in the input data to trigger updates.
+var string previous_data = ""
+bool data_changed = level_data_to_use != previous_data
+
+// Parses the main data string to find and extract level values for a specific ticker.
+process_level_data(level_data, symbol_data) =>
+    float[] result = array.new_float(0)
+    
+    string search_symbol = str.contains(symbol_data, ":") ? symbol_data : symbol_data + ":"
+    
+    int start = str.pos(level_data, search_symbol)
+    if start >= 0
+        bool is_valid_start = start == 0 or (start > 0 and str.substring(level_data, start - 1, start) == ";")
+        
+        if is_valid_start
+            int data_start = start + str.length(search_symbol)
+            if data_start < str.length(level_data)
+                string remaining_data = str.substring(level_data, data_start)
+                int data_end = str.pos(remaining_data, ";")
+                string values = data_end >= 0 ? str.substring(remaining_data, 0, data_end) : remaining_data
+                
+                if str.length(values) > 0  
+                    string[] value_array = str.split(values, ",")
+                    for value in value_array
+                        if str.length(value) > 0  
+                            float v = str.tonumber(value)
+                            if not na(v) 
+                                array.push(result, v)
+    result
+
+// Retrieves the processed level data for the current chart's symbol.
+get_symbol_data(string symbol) =>
+    string symbol_data = symbol + ":"
+    float[] result = process_level_data(level_data_to_use, symbol_data)
+    result
+
+// Extracts the global unix timestamp from the data string.
+get_timestamp_from_string(level_data) =>
+    int result = na
+    string search = "TIMESTAMP:"
+    int start = str.pos(level_data, search)
+    if start >= 0
+        bool is_valid_start = start == 0 or (start > 0 and str.substring(level_data, start - 1, start) == ";")
+        if is_valid_start
+            int data_start = start + str.length(search)
+            if data_start < str.length(level_data)
+                string remaining = str.substring(level_data, data_start)
+                int data_end = str.pos(remaining, ";")
+                string ts_string = data_end >= 0 ? str.substring(remaining, 0, data_end) : remaining
+                ts_string := str.replace_all(ts_string, " ", "")
+                if str.length(ts_string) > 0
+                    float v = str.tonumber(ts_string)
+                    if not na(v)
+                        result := int(v)
+    result
+
+// Formats a duration in seconds into a human-readable string (e.g., "5m ago").
+format_time_ago(seconds_ago) =>
+    if na(seconds_ago)
+        "N/A"
+    else if seconds_ago < 60
+        str.tostring(math.round(seconds_ago)) + "s ago"
+    else if seconds_ago < 3600
+        str.tostring(math.round(seconds_ago / 60)) + "m ago"
+    else if seconds_ago < 86400
+        str.tostring(math.round(seconds_ago / 3600)) + "h ago"
+    else
+        str.tostring(math.round(seconds_ago / 86400)) + "d ago"
+
+// --- User Inputs: Display Settings ---
+show_short_term = input.bool(true, "Show Short-term (st) Walls")
+show_previous_st_walls = input.bool(true, "Show Previous Walls")
+show_vanna_levels = input.bool(false, "Show Vanna Levels")
+show_stop_loss = input.bool(true, "Show Suggested Stop Loss Level") 
+extend_lines = input.bool(false, "Extend lines to the left")
+show_fib_target = input.bool(true, "See Fibonacci Target from Put Wall")
+tolerance = input.float(0.1, "Proximity Tolerance %", minval=0.1, maxval=0.5, step=0.1, display=display.none)
+
+// --- User Inputs: Style Settings ---
+color bg_color = chart.bg_color
+bool is_dark_mode = color.r(bg_color) < 128 and color.g(bg_color) < 128 and color.b(bg_color) < 128
+color auto_text_color = is_dark_mode ? color.white : color.black
+label_size = input.string("small", "Label Size", options=["tiny", "small", "normal", "large"], group="Style", display=display.none)
+line_style = input.string("Dotted", "Line Style", options=["Solid", "Dashed", "Dotted"], group="Style", display=display.none)
+line_transparency = input.int(40, "Lines Transparency", minval=0, maxval=100, group="Style", display=display.none)
+
+// --- User Inputs: Color Settings ---
+support_color = input.color(color.lime, "Support Color", group="Style")
+resist_color = input.color(color.red, "Resistance Color", group="Style")
+put_wall_color = input.color(#00FF00, "Put Wall Color", group="Style")
+call_wall_color = input.color(#FF0000, "Call Wall Color", group="Style")
+prev_put_wall_color = input.color(color.new(#00FF00, 50), "Previous Put Wall Color", group="Style")
+prev_call_wall_color = input.color(color.new(#FF0000, 50), "Previous Call Wall Color", group="Style")
+gamma_flip_color = input.color(color.yellow, "Gamma Flip Color", group="Style")
+fib_target_color = input.color(color.aqua, "Fib Target Color", group="Style")
+pos_vanna_color = input.color(color.blue, "Positive Vanna Color", group="Style")
+neg_vanna_color = input.color(color.orange, "Negative Vanna Color", group="Style")
+
+// --- Persistent Variables ---
+// These variables hold their values across different bars.
+var float s1_level = na
+var float r1_level = na
+var float implied_move = na
+var float gamma_support = na
+var float gamma_resistance = na
+var float gamma_flip = na
+var float iv = na
+var float cp_ratio = na
+var float trend = na
+var label[] labels = array.new_label()
+
+// --- Drawing Functions ---
+
+// Main function to draw a level line and its corresponding label on the chart.
+draw_line_and_label(price, color, name, is_gamma = false, is_previous = false) =>
+    if not na(price) and price != 0
+        line_style_used = line_style == "Solid" ? line.style_solid : 
+                         line_style == "Dashed" ? line.style_dashed : 
+                         line.style_dotted
+        
+        // Main Put and Call Walls are always solid lines.
+        if name == "PW" or name == "CW"
+            line_style_used := line.style_solid
+        
+        bool is_short_term = str.startswith(name, "st")
+        bool is_gamma_type = name == "PW" or name == "CW" or name == "st PW" or name == "st CW" or name == "Gamma Flip" or 
+                         name == "prev st PW" or name == "prev st CW"
+        bool is_gamma_flip = name == "Gamma Flip"
+        bool is_previous = str.startswith(name, "prev")
+        bool is_vanna = name == "Vanna+" or name == "Vanna-"
+        
+        int transparency = is_gamma_type ? 
+                          (is_previous ? 55 : 
+                          is_short_term ? 60 : 0) : 
+                          is_vanna ? 70 :
+                          line_transparency
+        
+        int start_x = extend_lines ? bar_index - 52 : bar_index
+        int end_x = is_previous ? bar_index - 5 : bar_index + 10
+        
+        line_id = line.new(x1=start_x, y1=price, x2=end_x, y2=price, 
+             color=color.new(color, transparency), width=2, 
+             style=line_style_used)
+        
+        // Labels are only shown for current (non-previous) levels.
+        if not is_previous
+            int label_x = is_short_term ? start_x + math.round((end_x - start_x) / 2) : 
+                         is_gamma_flip ? bar_index + 20 :
+                         is_vanna ? bar_index + 30 :
+                         bar_index + (is_gamma_type ? 15 : 11)
+            
+            label_style = is_short_term ? label.style_none : label.style_label_left
+            
+            float distance_pct = ((price - close) / close) * 100
+            string distance_text = (distance_pct > 0 ? "+" : "") + str.tostring(distance_pct, "#.##") + "%"
+            
+            label_id = label.new(
+                 x=label_x, 
+                 y=price,
+                 text=name, tooltip = str.tostring(price, "#.##") + " (" + distance_text + ")",
+                 color=color.new(color.black, 100),  
+                 textcolor=auto_text_color,  
+                 style=label_style,
+                 size=label_size == "tiny" ? size.tiny : 
+                     label_size == "small" ? size.small : 
+                     label_size == "normal" ? size.normal : size.large)
+            
+            array.push(labels, label_id)
+        
+        line_id
+
+// Converts a numeric activity level into a descriptive string.
+get_activity_text(level) =>
+    switch int(level)
+        0 => "Very Low"
+        1 => "Low"
+        2 => "Medium"
+        3 => "High"
+        4 => "Very High"
+        => "Unknown"
+
+// Deletes all existing labels from the chart.
+clear_labels() =>
+    for lbl in labels
+        label.delete(lbl)
+    array.clear(labels)
+
+// --- Main Logic ---
+
+// Get the levels for the current ticker.
+current_levels = get_symbol_data(syminfo.ticker)
+
+// Keep track of the last known timestamp from the data.
+var int global_timestamp = na
+int current_timestamp = get_timestamp_from_string(level_data_to_use)
+if not na(current_timestamp) and current_timestamp > 0
+    global_timestamp := current_timestamp
+
+// Update the previous data tracker if the input has changed.
+if data_changed
+    previous_data := level_data_to_use
+
+// If no data is available, display an error message.
+if custom_level_data == ""
+    runtime.error("No data string")
+else if array.size(current_levels) == 0
+    runtime.error("The current ticker has no data in the data string")
+
+// --- Drawing Execution ---
+
+// Declare persistent variables for line objects.
+var line s1_line = na
+var line r1_line = na
+
+// Draw basic support and resistance lines (S1, R1).
+if array.size(current_levels) >= 2
+    clear_labels()
+    s1_level := array.get(current_levels, 0)
+    r1_level := array.get(current_levels, 1)
+    
+    line.delete(s1_line)
+    line.delete(r1_line)
+
+    s1_line := draw_line_and_label(s1_level, support_color, "S1")
+    r1_line := draw_line_and_label(r1_level, resist_color, "R1")
+
+// Draw the Implied Move box based on option prices.
+var box implied_move_box = na
+var float upper_end = na
+if array.size(current_levels) >= 10
+    implied_move := array.get(current_levels, 2)
+    iv := array.get(current_levels, 6)
+    cp_ratio := array.get(current_levels, 7)
+    
+    if not na(implied_move) and implied_move != 0
+        float lower_end = close - implied_move
+        upper_end := close + implied_move
+        
+        box.delete(implied_move_box)
+        implied_move_box := box.new(
+             left=bar_index, 
+             top=upper_end, 
+             right=bar_index + 10, 
+             bottom=lower_end, 
+             bgcolor=color.new(color.gray, 87), 
+             border_color=color.new(color.gray, 50)
+         )
+        float upper_move_pct = (upper_end - close) / close * 100
+        float lower_move_pct = (lower_end - close) / close * 100
+        array.push(labels, label.new(x=bar_index + 12, y=upper_end, text="↑+" + str.tostring(upper_move_pct, "#") + "%", color=color.new(color.gray, 100), textcolor=auto_text_color, style=label.style_label_right, size=size.tiny))
+        array.push(labels, label.new(x=bar_index + 12, y=lower_end, text="↓" + str.tostring(lower_move_pct, "#") + "%", color=color.new(color.gray, 100), textcolor=auto_text_color, style=label.style_label_right, size=size.tiny))
+
+// Draw Gamma walls, Vanna levels, and other calculated levels.
+var line gamma_support_line = na
+var line gamma_resistance_line = na
+var box gamma_area_box_red = na
+var box gamma_area_box_lime = na
+var box gamma_area_box_green = na
+var line st_gamma_support_line = na
+var line st_gamma_resistance_line = na
+var line prev_st_gamma_support_line = na
+var line prev_st_gamma_resistance_line = na
+var line gamma_flip_line = na
+var line pos_vanna_line = na
+var line neg_vanna_line = na
+var line fib_target_line = na
+
+if array.size(current_levels) >= 17
+    gamma_support := array.get(current_levels, 3)
+    gamma_resistance := array.get(current_levels, 4)
+    gamma_flip := array.get(current_levels, 5)
+    trend := array.get(current_levels, 8)
+    
+    line.delete(gamma_support_line)
+    line.delete(gamma_resistance_line)
+    box.delete(gamma_area_box_red)
+    box.delete(gamma_area_box_lime)
+    box.delete(gamma_area_box_green)
+    
+    gamma_support_line := draw_line_and_label(gamma_support, put_wall_color, "PW", true)
+    gamma_resistance_line := draw_line_and_label(gamma_resistance, call_wall_color, "CW", true)
+
+    // Short-term and previous short-term gamma walls.
+    float st_gamma_sup = array.get(current_levels, 10)
+    float st_gamma_res = array.get(current_levels, 11)
+    float prev_st_gamma_sup = array.get(current_levels, 12)
+    float prev_st_gamma_res = array.get(current_levels, 13)
+
+    line.delete(st_gamma_support_line)
+    line.delete(st_gamma_resistance_line)
+    line.delete(prev_st_gamma_support_line)
+    line.delete(prev_st_gamma_resistance_line)
+
+    if show_short_term
+        if st_gamma_sup != 0
+            st_gamma_support_line := draw_line_and_label(st_gamma_sup, put_wall_color, "st PW", true)
+        
+        if st_gamma_res != 0
+            st_gamma_resistance_line := draw_line_and_label(st_gamma_res, call_wall_color, "st CW", true)
+        
+        if show_previous_st_walls
+            if prev_st_gamma_sup != 0
+                prev_st_gamma_support_line := draw_line_and_label(prev_st_gamma_sup, prev_put_wall_color, "prev st PW", true, true)
+            if prev_st_gamma_res != 0
+                prev_st_gamma_resistance_line := draw_line_and_label(prev_st_gamma_res, prev_call_wall_color, "prev st CW", true, true)
+    
+    // Draw colored boxes to visualize gamma exposure areas relative to implied move.
+    float lower_end = close - implied_move
+    upper_end := close + implied_move
+
+    if gamma_resistance < upper_end
+        gamma_area_box_green := box.new(left=bar_index + 10, top=math.min(gamma_resistance * 1.2, upper_end), right=bar_index + 11, bottom=gamma_resistance, bgcolor=color.new(#00FF00, 75), border_color=color.new(#00FF00, 100))
+    
+    gamma_area_box_lime := box.new(left=bar_index + 10, top=math.min(gamma_resistance, upper_end), right=bar_index + 11, bottom=math.max(gamma_support, lower_end), bgcolor=color.new(color.lime, 85), border_color=color.new(color.lime, 100))
+    
+    if gamma_support > lower_end
+        gamma_area_box_red := box.new(left=bar_index + 10, top=gamma_support, right=bar_index + 11, bottom=math.max(gamma_support * 0.8, lower_end), bgcolor=color.new(color.red, 85), border_color=color.new(color.red, 100))
+    
+    // Draw the Gamma Flip level.
+    if gamma_flip != 0
+        line.delete(gamma_flip_line)
+        gamma_flip_line := draw_line_and_label(gamma_flip, gamma_flip_color, "Gamma Flip", true)
+    
+    // Draw Vanna levels if enabled.
+    if show_vanna_levels
+        float pos_vanna = array.get(current_levels, 14)
+        float neg_vanna = array.get(current_levels, 15)
+        
+        line.delete(pos_vanna_line)
+        line.delete(neg_vanna_line)
+        
+        if pos_vanna != 0
+            pos_vanna_line := draw_line_and_label(pos_vanna, pos_vanna_color, "Vanna+")
+        if neg_vanna != 0
+            neg_vanna_line := draw_line_and_label(neg_vanna, neg_vanna_color, "Vanna-")
+    
+    // Draw the 1.618 Fibonacci extension target from the Put Wall.
+    if show_fib_target and not na(gamma_support) and gamma_support != 0 and not na(gamma_resistance) and gamma_resistance != 0
+        float gamma_range = gamma_resistance - gamma_support
+        float fib_target = gamma_support + gamma_range * 1.618
+        line.delete(fib_target_line)
+        fib_target_line := draw_line_and_label(fib_target, fib_target_color, "Fib Target")
+
+// --- Alert Logic ---
+
+// Variables and conditions for generating trading alerts.
+var float bounce_threshold_percent = 0.15
+var float min_bounce_percent = 0.5 
+var bool broke_call_wall = false
+var bool broke_put_wall = false
+var float covered_calls_iv_threshold = 65.0 
+var float leaps_iv_threshold = 35.0         
+var float call_wall_bounce_threshold = 0.15  
+var float call_wall_min_rejection = 0.5      
+var bool near_call_wall = false
+var float bounce_reference_high = na
+var bool near_put_wall = false
+var float bounce_reference_low = na
+
+// Logic to detect a bounce from the Put Wall.
+if not na(gamma_support) and gamma_support != 0
+    float distance_to_put_wall = math.abs(low - gamma_support) / gamma_support * 100
+    
+    if distance_to_put_wall <= bounce_threshold_percent
+        if not near_put_wall
+            near_put_wall := true
+            bounce_reference_low := low
+    else if near_put_wall and high > bounce_reference_low
+        float bounce_percent = (high - bounce_reference_low) / bounce_reference_low * 100
+        if bounce_percent >= min_bounce_percent
+            near_put_wall := false
+
+// Logic to detect a rejection from the Call Wall.
+if not na(gamma_resistance) and gamma_resistance != 0
+    float distance_to_call_wall = math.abs(high - gamma_resistance) / gamma_resistance * 100
+    
+    if distance_to_call_wall <= call_wall_bounce_threshold
+        if not near_call_wall
+            near_call_wall := true
+            bounce_reference_high := high
+    else if near_call_wall and low < bounce_reference_high
+        float rejection_percent = (bounce_reference_high - low) / bounce_reference_high * 100
+        if rejection_percent >= call_wall_min_rejection
+            near_call_wall := false
+
+broke_call_wall := close > gamma_resistance and gamma_resistance != 0
+broke_put_wall := close < gamma_support and gamma_support != 0
+
+// Logic to detect when the price crosses the stop loss level.
+var float previous_stop_loss = na
+var bool crossed_stop_loss = false
+if array.size(current_levels) >= 17 and show_stop_loss
+    float stop_loss = array.get(current_levels, 16)
+    
+    if not na(stop_loss) and stop_loss != 0 and stop_loss < close
+        previous_stop_loss := stop_loss
+        crossed_stop_loss := low < stop_loss and not(low[1] < previous_stop_loss)
+
+// Logic to detect when the price crosses a Vanna level.
+var bool vanna_cross = false
+if array.size(current_levels) >= 16 and show_vanna_levels
+    float pos_vanna = array.get(current_levels, 14)
+    float neg_vanna = array.get(current_levels, 15)
+    
+    if not na(pos_vanna) and not na(neg_vanna) and pos_vanna != 0 and neg_vanna != 0
+        vanna_cross := ta.cross(close, pos_vanna) or ta.cross(close, neg_vanna)
+
+// --- Alert Condition Definitions ---
+alertcondition(not na(gamma_support) and gamma_support != 0 and math.abs(close - gamma_support) / gamma_support * 100 <= tolerance, "At Put Wall", "Price is at Put Wall level (within x%)")
+alertcondition(not na(gamma_resistance) and gamma_resistance != 0 and math.abs(close - gamma_resistance) / gamma_resistance * 100 <= tolerance, "At Call Wall", "Price is at Call Wall level (within 0.3%)")
+alertcondition(ta.cross(close, gamma_flip) and gamma_flip != 0, "Gamma Flip Cross", "Price crossed Gamma Flip level")
+alertcondition(near_put_wall and close > bounce_reference_low and ((close - bounce_reference_low) / bounce_reference_low * 100) >= min_bounce_percent, "Put Wall Bounce", "Price bounced off Put Wall (Gamma Support)")
+alertcondition(near_call_wall and low < bounce_reference_high and ((bounce_reference_high - low) / bounce_reference_high * 100) >= call_wall_min_rejection,"Call Wall Rejection","Price rejected from Call Wall (Gamma Resistance)")
+alertcondition(trend > 1, "Call Wall Moved Up", "Call Wall Trend moved up more than 1%")
+alertcondition(trend < -1, "Call Wall Moved Down", "Call Wall Trend moved down more than 1%")
+alertcondition(broke_put_wall and not broke_put_wall[1], "Broke Put Wall (Gamma Support)", "Price closed below Put Wall (Gamma Support)")
+alertcondition(broke_call_wall and not broke_call_wall[1], "Broke Call Wall (Gamma Resistance)", "Price closed above Call Wall (Gamma Resistance)")
+alertcondition(iv >= covered_calls_iv_threshold, "Covered Calls Candidates", "High IV Environment (>65%) - Consider Covered Calls Strategy")
+alertcondition(iv <= leaps_iv_threshold, "LEAPS Candidates", "Low IV Environment (<35%) - Consider LEAPS Strategy")
+alertcondition(crossed_stop_loss, "Stop Loss Triggered", "Price crossed below the calculated stop loss level")
+alertcondition(vanna_cross, "Vanna Level Cross", "Price crossed a vanna level")
+
+
+// --- Information Panel ---
+// Displays a summary of key metrics on the chart.
+var label info_label = na
+var label stop_loss_label = na
+if barstate.islast and array.size(current_levels) >= 17
+    float cp_ratio_val = array.get(current_levels, 7)
+    float iv_val = array.get(current_levels, 6)
+    float call_wall_val = array.get(current_levels, 4)
+    float put_wall_val = array.get(current_levels, 3)
+    float trend_val = array.get(current_levels, 8)
+    float activity_level = array.get(current_levels, 9)
+    float im_value = array.get(current_levels, 2) / close * 100
+    
+    float pos_vanna_val = array.size(current_levels) >= 15 ? array.get(current_levels, 14) : 0
+    float neg_vanna_val = array.size(current_levels) >= 16 ? array.get(current_levels, 15) : 0
+    
+    float vanna_spread = (pos_vanna_val > 0 and neg_vanna_val > 0) ? ((pos_vanna_val - neg_vanna_val) / close) * 100 : 0
+    
+    float call_wall_pct = call_wall_val != 0 ? ((call_wall_val - close) / close) * 100 : na
+    float put_wall_pct = put_wall_val != 0 ? ((put_wall_val - close) / close) * 100 : na
+
+    string vanna_info = pos_vanna_val > 0 and neg_vanna_val > 0 ? str.tostring(vanna_spread, "#.##") + "%" : "N/A"
+    
+    // Calculate and display how long ago the data was updated.
+    string time_ago_str = "No timestamp found"
+    string last_emoji = "🔴"
+    
+    if not na(global_timestamp) and global_timestamp > 0
+        float current_time = timenow / 1000
+        float seconds_diff = current_time - global_timestamp
+        
+        if seconds_diff >= 0
+            time_ago_str := "Updated: " + format_time_ago(seconds_diff)
+            last_emoji := seconds_diff < 900 ? "🟢" : seconds_diff < 3600 ? "🟡" : "🔴"
+        else
+            time_ago_str := "Future timestamp error"
+            last_emoji := "⚠️"
+
+    // Set emojis for visual indication of metric status.
+    string cp_emoji = cp_ratio_val > 1 ? "🟢" : cp_ratio_val < 1 ? "🔴" : "⚪"
+    string iv_emoji = iv_val <= 30 ? "🟢" : iv_val >= 70 ? "🔴" : "🟡"
+    string call_emoji = call_wall_pct > 0 ? "🟢" : "🔴"
+    string put_emoji = put_wall_pct < 0 ? "🔴" : "🟢"
+    string trend_emoji = trend_val >= 0 ? "🟢" : "🔴"
+    string act_emoji = activity_level >= 3 ? "🟢" : activity_level >= 2 ? "🟡" : "🔴"
+    string vanna_emoji = vanna_spread > 0 ? "🔵" : vanna_spread < 0 ? "🟠" : "⚪"
+
+    string label_text = "C/P = " + str.tostring(cp_ratio_val, "#.##")
+    string tooltip_text =
+         cp_emoji    + " C/P: "        + str.tostring(cp_ratio_val, "#.##") +
+         "\n" + iv_emoji    + " IV: "         + str.tostring(iv_val, "#.##") + "%" +
+         "\n" + call_emoji  + " to CW: "      + (call_wall_pct > 0 ? "+" : "") + str.tostring(call_wall_pct, "#.##") + "%" +
+         "\n" + put_emoji   + " to PW: "      + (put_wall_pct  > 0 ? "+" : "") + str.tostring(put_wall_pct,  "#.##") + "%" +
+         "\n" + trend_emoji + " CW Trend: "   + (trend_val     >= 0 ? "+" : "") + str.tostring(trend_val,    "#.##") + "%" +
+         "\n🔳 Imp. Move: ±"   + str.tostring(im_value, "#.##") + "%" +
+         "\n" + act_emoji   + " Op Activity: " + get_activity_text(activity_level) +
+         "\n" + vanna_emoji + " Vanna: "      + vanna_info +
+         "\n" + last_emoji  + " " + time_ago_str
+
+    label.delete(info_label)
+    label.delete(stop_loss_label)
+
+    // Draw the new stop loss label at its price level
+    if show_stop_loss
+        float stop_loss_val = array.get(current_levels, 16)
+        if not na(stop_loss_val) and stop_loss_val != 0 and stop_loss_val < close
+            float distance_pct = ((stop_loss_val - close) / close) * 100
+            string distance_text = (distance_pct > 0 ? "+" : "") + str.tostring(distance_pct, "#.##") + "%"
+            stop_loss_label := label.new(
+                 x=bar_index + 20, 
+                 y=stop_loss_val,
+                 text="STOP: " + str.tostring(stop_loss_val, "#.##"),
+                 tooltip="Stop Loss: " + str.tostring(stop_loss_val, "#.##") + " (" + distance_text + ")",
+                 style=label.style_label_left,
+                 color=color.new(color.yellow, 15),
+                 textcolor=color.black,
+                 size=size.tiny
+             )
+
+    info_label := label.new(
+         x=bar_index + 20, 
+         y=upper_end, 
+         text=label_text, 
+         style=label.style_label_left, 
+         color=cp_ratio_val > 1 ? color.new(color.green, 50) : color.new(color.red, 50), 
+         textcolor=color.white, 
+         size=size.tiny, 
+         tooltip=tooltip_text
+     )
