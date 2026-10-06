@@ -24,7 +24,7 @@
         "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
       ],
       "status": "protótipo",
-      "page": "paginas/ewz-gex-win.html"
+      "page": "ferramentas/ewz-gex-win/index.html"
     },
     {
       "id": "mapa-de-opcoes",
@@ -43,7 +43,7 @@
       "automation": "média/alta conforme fonte",
       "source_repo": "https://github.com/pablopcdossantos2-sys/mapa-de-opcoes",
       "status": "documentado / implementação externa ao catálogo",
-      "page": "paginas/mapa-de-opcoes.html"
+      "page": "ferramentas/mapa-de-opcoes/index.html"
     },
     {
       "id": "ewz-mapa-opcoes-oi",
@@ -66,7 +66,7 @@
         "ferramentas/ewz-mapa-opcoes-oi/GUIA.md"
       ],
       "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia",
-      "page": "paginas/ewz-mapa-opcoes-oi.html"
+      "page": "ferramentas/ewz-mapa-opcoes-oi/index.html"
     },
     {
       "id": "quantedoptions-qo",
@@ -88,7 +88,7 @@
         "ferramentas/quantedoptions-qo/source/quantedOptions_Levels_qO.pine"
       ],
       "status": "código recebido para análise",
-      "page": "paginas/quantedoptions-qo.html"
+      "page": "ferramentas/quantedoptions-qo/index.html"
     },
     {
       "id": "options-levels",
@@ -110,7 +110,7 @@
         "ferramentas/options-levels/source/Options_Levels.pine"
       ],
       "status": "código recebido para análise",
-      "page": "paginas/options-levels.html"
+      "page": "ferramentas/options-levels/index.html"
     },
     {
       "id": "support-resistance-options-data",
@@ -134,7 +134,7 @@
         "ferramentas/support-resistance-options-data/source/Support_and_Resistance_levels_from_Options_Data.pine"
       ],
       "status": "código recebido para análise",
-      "page": "paginas/support-resistance-options-data.html"
+      "page": "ferramentas/support-resistance-options-data/index.html"
     }
   ]
 }
