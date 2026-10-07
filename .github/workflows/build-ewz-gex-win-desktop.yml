@@ -1,0 +1,60 @@
+name: Build EWZ GEX WIN Desktop
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "ferramentas/ewz-gex-win/desktop/**"
+      - ".github/workflows/build-ewz-gex-win-desktop.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: |
+            ferramentas/ewz-gex-win/desktop/requirements.txt
+            ferramentas/ewz-gex-win/desktop/requirements-build.txt
+
+      - name: Install dependencies
+        shell: pwsh
+        working-directory: ferramentas/ewz-gex-win/desktop
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-build.txt
+
+      - name: Run unit tests
+        shell: pwsh
+        working-directory: ferramentas/ewz-gex-win/desktop
+        run: pytest -q
+
+      - name: Build portable folder
+        shell: pwsh
+        working-directory: ferramentas/ewz-gex-win/desktop
+        run: pyinstaller --noconfirm --clean EWZ_GEX_WIN_Desktop.spec
+
+      - name: Create ZIP
+        shell: pwsh
+        working-directory: ferramentas/ewz-gex-win/desktop
+        run: |
+          Compress-Archive -Path "dist\EWZ-GEX-WIN-Desktop\*" -DestinationPath "EWZ-GEX-WIN-Desktop-Windows.zip" -Force
+
+      - name: Upload Windows portable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EWZ-GEX-WIN-Desktop-Windows
+          path: ferramentas/ewz-gex-win/desktop/EWZ-GEX-WIN-Desktop-Windows.zip
+          if-no-files-found: error
+          retention-days: 30
