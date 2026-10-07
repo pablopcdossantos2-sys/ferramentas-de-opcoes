@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from gex_core import contracts_from_records
+from edge_profiles import prepare_automation_profile
 
 BARCHART_URL = "https://www.barchart.com/etfs-funds/quotes/EWZ/gamma-exposure"
 
@@ -101,9 +102,18 @@ def extract_official_levels_from_payload(data: Any) -> dict[str, float]:
     return out
 
 class BarchartBrowserClient:
-    def __init__(self, *, visible: bool = True, timeout_seconds: int = 90):
+    def __init__(
+        self,
+        *,
+        visible: bool = True,
+        timeout_seconds: int = 90,
+        use_edge_extensions: bool = True,
+        edge_profile_dir: str = "Default",
+    ):
         self.visible = visible
         self.timeout_seconds = timeout_seconds
+        self.use_edge_extensions = use_edge_extensions
+        self.edge_profile_dir = edge_profile_dir
 
     def fetch(self) -> tuple[list[Mapping[str, Any]], dict[str, float], dict[str, Any]]:
         try:
@@ -112,18 +122,40 @@ class BarchartBrowserClient:
             raise RuntimeError("Playwright não está instalado. Execute: pip install -r requirements.txt") from exc
 
         captured: list[tuple[str, Any]] = []
+        profile_report: dict[str, Any] = {}
         with sync_playwright() as p:
-            profile_dir = Path.home() / ".ewz-gex-win" / "edge-profile"
-            profile_dir.mkdir(parents=True, exist_ok=True)
+            if self.use_edge_extensions:
+                profile_root, profile_report = prepare_automation_profile(self.edge_profile_dir)
+                launch_args = [f"--profile-directory={self.edge_profile_dir}"]
+                # Playwright normally adds --disable-extensions. Removing only
+                # that default flag allows the copied Edge extensions to load.
+                ignore_default_args = ["--disable-extensions"]
+                headless = False
+            else:
+                profile_root = Path.home() / ".ewz-gex-win" / "edge-profile"
+                profile_root.mkdir(parents=True, exist_ok=True)
+                launch_args = []
+                ignore_default_args = None
+                headless = not self.visible
+
             try:
                 context = p.chromium.launch_persistent_context(
-                    str(profile_dir),
+                    str(profile_root),
                     channel="msedge",
-                    headless=not self.visible,
+                    headless=headless,
                     locale="en-US",
+                    args=launch_args,
+                    ignore_default_args=ignore_default_args,
                 )
             except Exception as exc:
-                raise RuntimeError("Não foi possível abrir o Microsoft Edge. Verifique se o Edge está instalado e atualizado.") from exc
+                if self.use_edge_extensions:
+                    raise RuntimeError(
+                        "Não foi possível abrir o Microsoft Edge com as extensões do perfil selecionado. "
+                        "Tente selecionar outro perfil do Edge ou desative temporariamente o modo de compatibilidade com extensões."
+                    ) from exc
+                raise RuntimeError(
+                    "Não foi possível abrir o Microsoft Edge. Verifique se o Edge está instalado e atualizado."
+                ) from exc
 
             page = context.pages[0] if context.pages else context.new_page()
 
@@ -222,5 +254,6 @@ class BarchartBrowserClient:
             "api_url": best_url,
             "captured_requests": len(captured),
             "body_text": body_text[:5000],
+            "edge_profile": profile_report,
         }
         return records, official, meta
