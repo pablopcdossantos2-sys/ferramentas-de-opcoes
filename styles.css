@@ -384,3 +384,158 @@ footer a { color:var(--accent); font-weight:700; font-size:13px; }
   .resource-link { align-items:flex-start; flex-direction:column; }
   .resource-link small { text-align:left; }
 }
+
+
+/* Didactic concept glossary for the functional matrix */
+.criterion-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.concept-info,
+.info-hint {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  font: 800 11px/1 Inter, sans-serif;
+}
+.concept-info {
+  border: 1px solid color-mix(in srgb, var(--accent) 65%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+.concept-info:hover,
+.concept-info:focus-visible {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent) 18%, var(--panel));
+  border-color: var(--accent);
+  outline: none;
+}
+.matrix-help {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: -12px 0 18px;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.matrix-help .info-hint {
+  margin-top: 2px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line));
+  color: var(--accent);
+}
+.matrix-help p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.concept-dialog {
+  width: min(720px, calc(100% - 28px));
+  max-height: min(82vh, 760px);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: 0 30px 90px rgba(0,0,0,.48);
+}
+.concept-dialog::backdrop {
+  background: rgba(3, 8, 16, .72);
+  backdrop-filter: blur(4px);
+}
+.concept-dialog-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-height: min(82vh, 760px);
+}
+.concept-dialog-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px 26px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.concept-dialog-head h2 {
+  margin: 0;
+  font-size: 30px;
+}
+.dialog-close {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+}
+.dialog-close:hover,
+.dialog-close:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+.concept-dialog-body {
+  overflow-y: auto;
+  padding: 24px 26px;
+}
+.concept-dialog-body h3 {
+  margin-top: 22px;
+  font-size: 16px;
+  letter-spacing: -.01em;
+}
+.concept-dialog-body h3:first-child {
+  margin-top: 0;
+}
+.concept-dialog-body p,
+.concept-dialog-body li {
+  color: var(--muted);
+}
+.concept-dialog-body .concept-simple {
+  font-size: 17px;
+  color: var(--text);
+}
+.concept-example,
+.concept-caution {
+  margin-top: 18px;
+  padding: 15px 17px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.concept-example strong {
+  color: var(--accent);
+}
+.concept-caution strong {
+  color: var(--warn);
+}
+.concept-dialog-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 26px 20px;
+  border-top: 1px solid var(--line);
+}
+.concept-dialog-foot p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  max-width: 510px;
+}
+@media (max-width: 620px) {
+  .concept-dialog-head,
+  .concept-dialog-body,
+  .concept-dialog-foot { padding-inline: 18px; }
+  .concept-dialog-foot { align-items: stretch; flex-direction: column; }
+  .concept-dialog-foot .btn { text-align: center; }
+}
