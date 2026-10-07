@@ -31,11 +31,13 @@ Reunir, em uma única interface, uma visão técnica e comparativa das seguintes
 │   ├── README.md
 │   ├── catalogo.json
 │   └── <uma pasta por ferramenta>/
-├── paginas/
-│   └── <uma página HTML por ferramenta>/
+│       ├── index.html
+│       ├── tutorial.html
+│       └── source/ ou desktop/
 └── .github/
     └── workflows/
-        └── pages.yml
+        ├── pages.yml
+        └── build-ewz-gex-win-desktop.yml
 ```
 
 ## Banco de dados de ferramentas
@@ -46,7 +48,7 @@ A regra adotada daqui em diante é: **toda nova ferramenta de opções analisada
 
 ## Páginas individuais
 
-Cada ferramenta possui uma ficha HTML navegável em `paginas/`, com estrutura fixa:
+Cada ferramenta possui uma ficha HTML navegável em `ferramentas/<id>/index.html`, com estrutura fixa:
 
 - Objetivo
 - Input
@@ -57,7 +59,7 @@ Cada ferramenta possui uma ficha HTML navegável em `paginas/`, com estrutura fi
 - Código-fonte
 - Comparação
 
-Os cards da página inicial apontam diretamente para essas fichas, e cada ficha permite navegar para a anterior, para a próxima e para a matriz comparativa geral.
+Os cards da página inicial apontam para essas fichas. Cada ficha também oferece o tutorial web de instalação da ferramenta e retorno à matriz comparativa geral.
 
 ## Executar localmente
 
