@@ -143,7 +143,7 @@ appBlock = input.string(
      "",
      "Bloco EWZGEX1",
      group = groupBridge,
-     tooltip = "Cole aqui a linha copiada pela aplicação EWZ GEX → WIN Desktop."
+     tooltip = "Cole o bloco na JANELA DE CONFIGURAÇÕES do indicador, neste campo. Não cole o bloco dentro do código Pine."
 )
 
 bool appBlockOk = str.startswith(appBlock, "EWZGEX1|")
