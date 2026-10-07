@@ -45,6 +45,61 @@ def parse_official_levels(text: str) -> dict[str, float]:
                 break
     return out
 
+def _floatish(value: Any) -> float | None:
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        match = re.search(r"-?[0-9]+(?:\.[0-9]+)?", value.replace(",", ""))
+        return float(match.group(0)) if match else None
+    if isinstance(value, Mapping):
+        for key in ("value", "price", "strike", "strikePrice", "rawValue"):
+            if key in value:
+                parsed = _floatish(value[key])
+                if parsed is not None:
+                    return parsed
+    return None
+
+def extract_official_levels_from_payload(data: Any) -> dict[str, float]:
+    out: dict[str, float] = {}
+    key_targets = {
+        "gammaflip": "flip",
+        "gammaflippoint": "flip",
+        "flippoint": "flip",
+        "callwall": "cw1",
+        "putwall": "floor",
+    }
+
+    def normalized(text: Any) -> str:
+        return re.sub(r"[^a-z]", "", str(text).lower())
+
+    def walk(node: Any) -> None:
+        if isinstance(node, Mapping):
+            for key, value in node.items():
+                target = key_targets.get(normalized(key))
+                if target:
+                    parsed = _floatish(value)
+                    if parsed is not None:
+                        out.setdefault(target, parsed)
+
+            label = node.get("label") or node.get("name") or node.get("title") or node.get("levelName")
+            value = node.get("value") or node.get("price") or node.get("level") or node.get("strike")
+            if label is not None and value is not None:
+                label_key = normalized(label)
+                for source, target in key_targets.items():
+                    if source in label_key:
+                        parsed = _floatish(value)
+                        if parsed is not None:
+                            out.setdefault(target, parsed)
+
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+
+    walk(data)
+    return out
+
 class BarchartBrowserClient:
     def __init__(self, *, visible: bool = True, timeout_seconds: int = 90):
         self.visible = visible
@@ -111,11 +166,15 @@ class BarchartBrowserClient:
             official = parse_official_levels(body_text)
             records: list[Mapping[str, Any]] = []
             best_url = ""
+            largest_response = 0
             for url, payload in captured:
+                official.update(extract_official_levels_from_payload(payload))
                 recs = _flatten_records(payload.get("data", payload) if isinstance(payload, Mapping) else payload)
-                if len(recs) > len(records):
-                    records = recs
-                    best_url = url
+                if recs:
+                    records.extend(recs)
+                    if len(recs) > largest_response:
+                        largest_response = len(recs)
+                        best_url = url
 
             if not records:
                 payload = page.evaluate("""
@@ -142,7 +201,8 @@ class BarchartBrowserClient:
                 """)
                 if payload and payload.get("data"):
                     data = payload["data"]
-                    records = _flatten_records(data.get("data", data) if isinstance(data, dict) else data)
+                    official.update(extract_official_levels_from_payload(data))
+                    records.extend(_flatten_records(data.get("data", data) if isinstance(data, dict) else data))
                     best_url = payload.get("url", "")
 
             context.close()
