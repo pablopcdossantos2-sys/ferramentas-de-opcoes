@@ -97,11 +97,11 @@ A Matriz funcional possui ícones de informação nos principais conceitos de op
 
 ## Tutoriais de instalação
 
-Cada ferramenta catalogada possui um arquivo `TUTORIAL-INSTALACAO.md` dentro de sua própria pasta. Os tutoriais são escritos para usuários com pouca familiaridade com terminal, GitHub ou Pine Script.
+Cada ferramenta catalogada possui uma página `tutorial.html` dentro de sua própria pasta. Os tutoriais usam o mesmo visual do web-portfólio e são escritos para usuários com pouca familiaridade com terminal, GitHub ou Pine Script.
 
 Quando a instalação completa não pode ser reproduzida com os arquivos atualmente preservados, o tutorial declara isso explicitamente em vez de inventar dependências ou comandos. Essa regra é especialmente importante para ferramentas que dependem de geradores externos de dados ou de componentes ainda não arquivados.
 
-A partir de agora, toda nova ferramenta adicionada ao banco deve possuir também um tutorial de instalação.
+A partir de agora, toda nova ferramenta adicionada ao banco deve possuir também um tutorial de instalação em HTML integrado ao web-portfólio.
 
 
 ## Referências visuais
@@ -115,3 +115,22 @@ Atualmente há referências visuais catalogadas para:
 - quantedOptions Levels [qO];
 - Options Levels;
 - Support and Resistance levels from Options Data.
+
+
+## Aplicação desktop do projeto principal
+
+A aplicação complementar do **EWZ GEX → WIN** está em desenvolvimento em `ferramentas/ewz-gex-win/desktop/`.
+
+A versão alpha já possui:
+
+- GUI em Tkinter;
+- coleta do Barchart por sessão real do Microsoft Edge via Playwright;
+- captura de dados de opções/gamma/OI;
+- agregação local de GEX por strike;
+- tentativa de extração de Call Wall, Put Wall e Gamma Flip publicados;
+- identificação explícita de níveis locais de baixa confiança;
+- exportação do bloco `EWZGEX1`;
+- importação desse bloco pelo Pine;
+- testes unitários e workflow de build portátil para Windows.
+
+O workflow `.github/workflows/build-ewz-gex-win-desktop.yml` gera um ZIP portátil como artifact do GitHub Actions. A aplicação permanece **alpha** até a coleta e os níveis serem validados em uso real.
