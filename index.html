@@ -257,6 +257,11 @@
           </div>
         </div>
 
+        <div class="matrix-help">
+          <span class="info-hint">i</span>
+          <p>Os termos de opções marcados com o ícone de informação possuem uma explicação didática. Clique no ícone para entender o conceito antes de comparar as ferramentas.</p>
+        </div>
+
         <div class="table-tools">
           <label>
             <span>Filtrar recursos</span>
@@ -280,22 +285,22 @@
             <tbody>
               <tr><th>Aquisição de dados</th><td data-state="yes">Automática, via app</td><td data-state="yes">WebApp / provedor</td><td data-state="no">Entrada manual</td><td data-state="partial">Externa ao Pine</td><td data-state="no">Não</td><td data-state="partial">Externa ao Pine</td></tr>
               <tr><th>GUI própria</th><td data-state="yes">Desktop portátil</td><td data-state="yes">Dashboard web</td><td data-state="no">TradingView apenas</td><td data-state="no">Não no código fornecido</td><td data-state="no">Não</td><td data-state="no">Não no código fornecido</td></tr>
-              <tr><th>Open Interest</th><td data-state="yes">Usado no GEX</td><td data-state="yes">Métrica central</td><td data-state="yes">Métrica central por faixa</td><td data-state="partial">Recebe perfil pronto</td><td data-state="partial">Indireto</td><td data-state="partial">Origem externa</td></tr>
-              <tr><th>Notional Open Interest</th><td data-state="no">Não é foco</td><td data-state="yes">Métrica central</td><td data-state="yes">Nocional pelo strike</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>Valor por prêmio × OI</th><td data-state="no">Não é foco</td><td data-state="partial">Pode ser derivado</td><td data-state="yes">Métrica nativa</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th><span class="criterion-label">Open Interest<button class="concept-info" type="button" data-concept="open-interest" aria-label="Explicação: Open Interest" title="Entender este conceito">i</button></span></th><td data-state="yes">Usado no GEX</td><td data-state="yes">Métrica central</td><td data-state="yes">Métrica central por faixa</td><td data-state="partial">Recebe perfil pronto</td><td data-state="partial">Indireto</td><td data-state="partial">Origem externa</td></tr>
+              <tr><th><span class="criterion-label">Notional Open Interest<button class="concept-info" type="button" data-concept="notional-oi" aria-label="Explicação: Notional Open Interest" title="Entender este conceito">i</button></span></th><td data-state="no">Não é foco</td><td data-state="yes">Métrica central</td><td data-state="yes">Nocional pelo strike</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th><span class="criterion-label">Valor por prêmio × OI<button class="concept-info" type="button" data-concept="premium-oi-value" aria-label="Explicação: Valor por prêmio × OI" title="Entender este conceito">i</button></span></th><td data-state="no">Não é foco</td><td data-state="partial">Pode ser derivado</td><td data-state="yes">Métrica nativa</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
               <tr><th>Histórico por snapshots</th><td data-state="partial">Previsto/registrável</td><td data-state="yes">Sim, por desenho metodológico</td><td data-state="no">Snapshot estático</td><td data-state="no">Snapshot atual</td><td data-state="no">Não</td><td data-state="partial">Walls anteriores</td></tr>
               <tr><th>Validação/proveniência do input</th><td data-state="partial">Depende do coletor</td><td data-state="yes">Preserva fonte/snapshot</td><td data-state="yes">Data OI, fonte, duplicatas, NA e calendário</td><td data-state="partial">Formato versionado</td><td data-state="partial">Lista posicional</td><td data-state="partial">Timestamp global</td></tr>
-              <tr><th>Call / Put Wall</th><td data-state="yes">Sim</td><td data-state="no">Não como foco atual</td><td data-state="no">Não calcula</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
-              <tr><th>Gamma Flip</th><td data-state="partial">Estimativa local</td><td data-state="no">Não implementado</td><td data-state="no">Não</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
-              <tr><th>GEX por strike</th><td data-state="yes">Calculado no app</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Perfil importado</td><td data-state="no">Não</td><td data-state="no">Não no Pine</td></tr>
+              <tr><th><span class="criterion-label">Call / Put Wall<button class="concept-info" type="button" data-concept="walls" aria-label="Explicação: Call / Put Wall" title="Entender este conceito">i</button></span></th><td data-state="yes">Sim</td><td data-state="no">Não como foco atual</td><td data-state="no">Não calcula</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
+              <tr><th><span class="criterion-label">Gamma Flip<button class="concept-info" type="button" data-concept="gamma-flip" aria-label="Explicação: Gamma Flip" title="Entender este conceito">i</button></span></th><td data-state="partial">Estimativa local</td><td data-state="no">Não implementado</td><td data-state="no">Não</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td><td data-state="yes">Sim</td></tr>
+              <tr><th><span class="criterion-label">GEX por strike<button class="concept-info" type="button" data-concept="gex" aria-label="Explicação: GEX por strike" title="Entender este conceito">i</button></span></th><td data-state="yes">Calculado no app</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Perfil importado</td><td data-state="no">Não</td><td data-state="no">Não no Pine</td></tr>
               <tr><th>Perfil visual por strike/faixa</th><td data-state="partial">Pode evoluir</td><td data-state="yes">Concentração/matriz</td><td data-state="yes">Faixas coloridas por OI</td><td data-state="yes">Ladder excelente</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>DEX</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">DEX C/P</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
-              <tr><th>Vanna</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Vanna ±</td></tr>
-              <tr><th>Implied Move</th><td data-state="no">Não</td><td data-state="no">Não como requisito central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
-              <tr><th>IV</th><td data-state="partial">Disponível na cadeia, não central</td><td data-state="partial">Pode ser incorporada</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
-              <tr><th>Put/Call ratio</th><td data-state="partial">Pode ser calculado</td><td data-state="yes">Descritivo</td><td data-state="yes">P/C de OI</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
-              <tr><th>Whale / Top strikes</th><td data-state="partial">Picos secundários</td><td data-state="partial">Concentração por strike</td><td data-state="partial">Concentração visível por faixa</td><td data-state="yes">Top 5</td><td data-state="yes">Whale 1–5</td><td data-state="no">Não nesse formato</td></tr>
-              <tr><th>Níveis σ</th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">σ1 / σ2</td><td data-state="no">Não</td></tr>
+              <tr><th><span class="criterion-label">DEX<button class="concept-info" type="button" data-concept="dex" aria-label="Explicação: DEX" title="Entender este conceito">i</button></span></th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">DEX C/P</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
+              <tr><th><span class="criterion-label">Vanna<button class="concept-info" type="button" data-concept="vanna" aria-label="Explicação: Vanna" title="Entender este conceito">i</button></span></th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Vanna ±</td></tr>
+              <tr><th><span class="criterion-label">Implied Move<button class="concept-info" type="button" data-concept="implied-move" aria-label="Explicação: Implied Move" title="Entender este conceito">i</button></span></th><td data-state="no">Não</td><td data-state="no">Não como requisito central</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th><span class="criterion-label">IV<button class="concept-info" type="button" data-concept="iv" aria-label="Explicação: IV" title="Entender este conceito">i</button></span></th><td data-state="partial">Disponível na cadeia, não central</td><td data-state="partial">Pode ser incorporada</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th><span class="criterion-label">Put/Call ratio<button class="concept-info" type="button" data-concept="put-call-ratio" aria-label="Explicação: Put/Call ratio" title="Entender este conceito">i</button></span></th><td data-state="partial">Pode ser calculado</td><td data-state="yes">Descritivo</td><td data-state="yes">P/C de OI</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">Sim</td></tr>
+              <tr><th><span class="criterion-label">Whale / Top strikes<button class="concept-info" type="button" data-concept="whale-top-strikes" aria-label="Explicação: Whale / Top strikes" title="Entender este conceito">i</button></span></th><td data-state="partial">Picos secundários</td><td data-state="partial">Concentração por strike</td><td data-state="partial">Concentração visível por faixa</td><td data-state="yes">Top 5</td><td data-state="yes">Whale 1–5</td><td data-state="no">Não nesse formato</td></tr>
+              <tr><th><span class="criterion-label">Níveis σ<button class="concept-info" type="button" data-concept="sigma-levels" aria-label="Explicação: Níveis σ" title="Entender este conceito">i</button></span></th><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="no">Não</td><td data-state="yes">σ1 / σ2</td><td data-state="no">Não</td></tr>
               <tr><th>Conversão ETF → futuro</th><td data-state="yes">EWZ → WIN</td><td data-state="no">Não</td><td data-state="no">EWZ apenas</td><td data-state="yes">Vários pares</td><td data-state="no">Não</td><td data-state="no">Não</td></tr>
               <tr><th>Alertas avançados</th><td data-state="partial">Cruzamento/proximidade</td><td data-state="no">Não é foco</td><td data-state="no">Não possui</td><td data-state="partial">Walls/Flip</td><td data-state="partial">Básicos</td><td data-state="yes">Mais completo</td></tr>
               <tr><th>Transporte por bloco único</th><td data-state="yes">Sim</td><td data-state="partial">Importação estruturada</td><td data-state="yes">Bloco multilinha</td><td data-state="yes">Sim</td><td data-state="yes">Lista única</td><td data-state="yes">Sim</td></tr>
@@ -375,6 +380,24 @@
       <a href="#top">Voltar ao topo ↑</a>
     </div>
   </footer>
+
+
+  <dialog id="conceptDialog" class="concept-dialog" aria-labelledby="conceptTitle">
+    <div class="concept-dialog-card">
+      <div class="concept-dialog-head">
+        <div>
+          <p class="eyebrow">GLOSSÁRIO DE OPÇÕES</p>
+          <h2 id="conceptTitle">Conceito</h2>
+        </div>
+        <button id="conceptClose" class="dialog-close" type="button" aria-label="Fechar explicação">×</button>
+      </div>
+      <div id="conceptBody" class="concept-dialog-body"></div>
+      <div class="concept-dialog-foot">
+        <p>As explicações são educacionais e descrevem o uso dos termos neste portfólio. A metodologia exata pode variar entre fornecedores e ferramentas.</p>
+        <button id="conceptCloseBottom" class="btn secondary" type="button">Fechar</button>
+      </div>
+    </div>
+  </dialog>
 
   <script src="app.js"></script>
 </body>
