@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -25,7 +25,8 @@
       ],
       "status": "protótipo",
       "page": "ferramentas/ewz-gex-win/index.html",
-      "role": "primary"
+      "role": "primary",
+      "installation_tutorial": "ferramentas/ewz-gex-win/TUTORIAL-INSTALACAO.md"
     },
     {
       "id": "mapa-de-opcoes",
@@ -45,7 +46,8 @@
       "source_repo": "https://github.com/pablopcdossantos2-sys/mapa-de-opcoes",
       "status": "documentado / implementação externa ao catálogo",
       "page": "ferramentas/mapa-de-opcoes/index.html",
-      "role": "complementary"
+      "role": "complementary",
+      "installation_tutorial": "ferramentas/mapa-de-opcoes/TUTORIAL-INSTALACAO.md"
     },
     {
       "id": "ewz-mapa-opcoes-oi",
@@ -69,7 +71,8 @@
       ],
       "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia",
       "page": "ferramentas/ewz-mapa-opcoes-oi/index.html",
-      "role": "reference"
+      "role": "reference",
+      "installation_tutorial": "ferramentas/ewz-mapa-opcoes-oi/TUTORIAL-INSTALACAO.md"
     },
     {
       "id": "quantedoptions-qo",
@@ -92,7 +95,8 @@
       ],
       "status": "código recebido para análise",
       "page": "ferramentas/quantedoptions-qo/index.html",
-      "role": "reference"
+      "role": "reference",
+      "installation_tutorial": "ferramentas/quantedoptions-qo/TUTORIAL-INSTALACAO.md"
     },
     {
       "id": "options-levels",
@@ -115,7 +119,8 @@
       ],
       "status": "código recebido para análise",
       "page": "ferramentas/options-levels/index.html",
-      "role": "reference"
+      "role": "reference",
+      "installation_tutorial": "ferramentas/options-levels/TUTORIAL-INSTALACAO.md"
     },
     {
       "id": "support-resistance-options-data",
@@ -140,7 +145,8 @@
       ],
       "status": "código recebido para análise",
       "page": "ferramentas/support-resistance-options-data/index.html",
-      "role": "reference"
+      "role": "reference",
+      "installation_tutorial": "ferramentas/support-resistance-options-data/TUTORIAL-INSTALACAO.md"
     }
   ],
   "project_strategy": {
