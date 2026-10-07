@@ -54,7 +54,7 @@
     <p class="eyebrow">REQUISITOS</p><h2>O que você precisa</h2>
     <ul>
       <li>Windows 10 ou 11.</li>
-      <li>Microsoft Edge instalado e atualizado.</li>
+      <li>Microsoft Edge instalado e atualizado.</li><li>Se você usa Cold Turkey, mantenha a extensão instalada no seu perfil normal do Edge. A aplicação agora detecta e replica as extensões para o perfil de automação.</li>
       <li>Conta no TradingView.</li>
       <li>Acesso a um gráfico do WIN ou do ativo em que deseja visualizar as projeções.</li>
     </ul>
@@ -79,10 +79,10 @@ python app.py</code></pre>
 
   <article id="uso" class="detail-block">
     <p class="eyebrow">PRIMEIRO USO</p><h2>Coletar os dados e gerar o bloco</h2>
-    <div class="tutorial-step"><span>1</span><div><h3>Clique em “Atualizar Barchart”</h3><p>Mantenha a opção <strong>Mostrar Edge durante a coleta</strong> marcada nos primeiros testes.</p></div></div>
-    <div class="tutorial-step"><span>2</span><div><h3>Conclua uma eventual verificação do site</h3><p>Se o Barchart pedir confirmação de navegador/anti-robô, conclua-a na janela do Edge. A aplicação mantém um perfil próprio para reaproveitar a sessão em execuções futuras.</p></div></div>
-    <div class="tutorial-step"><span>3</span><div><h3>Revise os níveis</h3><p>A tabela informa o valor, a origem e a confiança. Call Wall, Put Wall e Gamma Flip podem ser marcados como extraídos da página; níveis auxiliares podem aparecer como estimativas locais de baixa confiança.</p></div></div>
-    <div class="tutorial-step"><span>4</span><div><h3>Copie o bloco</h3><p>Clique em <strong>Copiar bloco</strong>. O resultado começa com <code>EWZGEX1|</code> e reúne todos os níveis em uma única linha.</p></div></div>
+    <div class="tutorial-step"><span>1</span><div><h3>Confirme o perfil do Edge</h3><p>Na seção <strong>Edge e extensões</strong>, mantenha marcada a opção <strong>Usar minhas extensões do Edge</strong>. A aplicação lista seus perfis e indica quando o Cold Turkey foi localizado. Se necessário, selecione outro perfil e clique em <strong>Detectar novamente</strong>.</p></div></div><div class="tutorial-step"><span>2</span><div><h3>Clique em “Atualizar Barchart”</h3><p>A aplicação copia as extensões do perfil escolhido para um perfil isolado próprio e abre o Edge com essas extensões ativas. O Edge fica visível quando esse modo está habilitado.</p></div></div>
+    <div class="tutorial-step"><span>3</span><div><h3>Conclua uma eventual verificação do site</h3><p>Se o Barchart pedir confirmação de navegador/anti-robô, conclua-a na janela do Edge. A aplicação mantém um perfil próprio para reaproveitar a sessão em execuções futuras.</p></div></div>
+    <div class="tutorial-step"><span>4</span><div><h3>Revise os níveis</h3><p>A tabela informa o valor, a origem e a confiança. Call Wall, Put Wall e Gamma Flip podem ser marcados como extraídos da página; níveis auxiliares podem aparecer como estimativas locais de baixa confiança.</p></div></div>
+    <div class="tutorial-step"><span>5</span><div><h3>Copie o bloco</h3><p>Clique em <strong>Copiar bloco</strong>. O resultado começa com <code>EWZGEX1|</code> e reúne todos os níveis em uma única linha.</p></div></div>
 
     <h2 class="tutorial-subtitle">Instalar o indicador Pine</h2>
     <ol>
@@ -111,7 +111,7 @@ python app.py</code></pre>
   <article id="limites" class="detail-block">
     <p class="eyebrow">LIMITAÇÕES</p><h2>O que ainda está sendo validado</h2>
     <p>O Barchart informa que seus níveis de Gamma Exposure usam gamma, Open Interest e um movimento de 1% do ativo; a aplicação usa uma aproximação local compatível com essa ideia para construir o perfil por strike. Isso não é apresentado como reprodução exata do cálculo proprietário do site.</p>
-    <p>O <strong>Gamma Flip</strong> não é inventado quando não pode ser extraído de forma confiável. Os níveis auxiliares específicos da metodologia original — como “Call/Put teto”, “Gamma resistência” e “Gamma suporte” — são claramente identificados quando forem apenas proxies locais.</p>
+    <div class="concept-caution"><strong>Cold Turkey / outras extensões</strong><p>O modo de compatibilidade copia as extensões e o estado necessário para um perfil separado da aplicação. Isso é preferível a automatizar diretamente o perfil normal do Edge, que pode estar aberto e bloqueado por outro processo. Se uma extensão depender de uma política corporativa ou de dados não copiáveis, ela ainda poderá exigir validação adicional.</p></div><p>O <strong>Gamma Flip</strong> não é inventado quando não pode ser extraído de forma confiável. Os níveis auxiliares específicos da metodologia original — como “Call/Put teto”, “Gamma resistência” e “Gamma suporte” — são claramente identificados quando forem apenas proxies locais.</p>
   </article></div>
       </div>
     </section>
