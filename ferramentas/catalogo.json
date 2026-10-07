@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -26,7 +26,8 @@
       "status": "protótipo",
       "page": "ferramentas/ewz-gex-win/index.html",
       "role": "primary",
-      "installation_tutorial": "ferramentas/ewz-gex-win/TUTORIAL-INSTALACAO.md"
+      "installation_tutorial": "ferramentas/ewz-gex-win/TUTORIAL-INSTALACAO.md",
+      "visual_assets": []
     },
     {
       "id": "mapa-de-opcoes",
@@ -47,7 +48,8 @@
       "status": "documentado / implementação externa ao catálogo",
       "page": "ferramentas/mapa-de-opcoes/index.html",
       "role": "complementary",
-      "installation_tutorial": "ferramentas/mapa-de-opcoes/TUTORIAL-INSTALACAO.md"
+      "installation_tutorial": "ferramentas/mapa-de-opcoes/TUTORIAL-INSTALACAO.md",
+      "visual_assets": []
     },
     {
       "id": "ewz-mapa-opcoes-oi",
@@ -72,7 +74,8 @@
       "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia",
       "page": "ferramentas/ewz-mapa-opcoes-oi/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/ewz-mapa-opcoes-oi/TUTORIAL-INSTALACAO.md"
+      "installation_tutorial": "ferramentas/ewz-mapa-opcoes-oi/TUTORIAL-INSTALACAO.md",
+      "visual_assets": []
     },
     {
       "id": "quantedoptions-qo",
@@ -96,7 +99,14 @@
       "status": "código recebido para análise",
       "page": "ferramentas/quantedoptions-qo/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/quantedoptions-qo/TUTORIAL-INSTALACAO.md"
+      "installation_tutorial": "ferramentas/quantedoptions-qo/TUTORIAL-INSTALACAO.md",
+      "visual_assets": [
+        {
+          "path": "assets/tool-screenshots/quantedoptions-levels-qo.webp",
+          "kind": "reference_screenshot",
+          "source_url": "https://www.tradingview.com/script/qeonhPAK-quantedOptions-Levels-qO/"
+        }
+      ]
     },
     {
       "id": "options-levels",
@@ -120,7 +130,14 @@
       "status": "código recebido para análise",
       "page": "ferramentas/options-levels/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/options-levels/TUTORIAL-INSTALACAO.md"
+      "installation_tutorial": "ferramentas/options-levels/TUTORIAL-INSTALACAO.md",
+      "visual_assets": [
+        {
+          "path": "assets/tool-screenshots/options-levels.webp",
+          "kind": "reference_screenshot",
+          "source_url": "https://www.tradingview.com/script/UkEpZssf-Options-levels/"
+        }
+      ]
     },
     {
       "id": "support-resistance-options-data",
@@ -146,7 +163,14 @@
       "status": "código recebido para análise",
       "page": "ferramentas/support-resistance-options-data/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/support-resistance-options-data/TUTORIAL-INSTALACAO.md"
+      "installation_tutorial": "ferramentas/support-resistance-options-data/TUTORIAL-INSTALACAO.md",
+      "visual_assets": [
+        {
+          "path": "assets/tool-screenshots/support-resistance-options-data.webp",
+          "kind": "reference_screenshot",
+          "source_url": "https://www.tradingview.com/script/gAwvM2uE-Support-and-Resistance-levels-from-Options-Data/"
+        }
+      ]
     }
   ],
   "project_strategy": {
