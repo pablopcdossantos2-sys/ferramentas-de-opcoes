@@ -8,24 +8,30 @@ from tkinter import filedialog, messagebox, ttk
 
 from barchart_client import BARCHART_URL, BarchartBrowserClient
 from gex_core import LEVEL_SPECS, contracts_from_records, derive_levels, format_export_block
+from edge_profiles import list_edge_profiles
 
 APP_TITLE = "EWZ GEX → WIN Desktop"
-APP_VERSION = "0.1.0-alpha.1"
+APP_VERSION = "0.1.1-alpha.1"
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(f"{APP_TITLE} {APP_VERSION}")
-        self.geometry("980x720")
-        self.minsize(860, 620)
+        self.geometry("1020x790")
+        self.minsize(900, 680)
         self.snapshot = None
         self.level_vars: dict[str, tk.StringVar] = {}
         self.visible_browser = tk.BooleanVar(value=True)
+        self.use_edge_extensions = tk.BooleanVar(value=True)
+        self.edge_profile_var = tk.StringVar(value="")
+        self.edge_profile_map: dict[str, str] = {}
+        self.edge_extension_status_var = tk.StringVar(value="Detectando perfis do Edge…")
         self.status_var = tk.StringVar(value="Pronto. Clique em Atualizar Barchart.")
         self.source_var = tk.StringVar(value=BARCHART_URL)
         self.spot_var = tk.StringVar(value="—")
         self.exp_var = tk.StringVar(value="—")
         self._build_ui()
+        self._reload_edge_profiles()
 
     def _build_ui(self):
         style = ttk.Style(self)
@@ -44,7 +50,7 @@ class App(tk.Tk):
         ).pack(anchor="w", pady=(2, 12))
 
         controls = ttk.Frame(root)
-        controls.pack(fill="x", pady=(0, 12))
+        controls.pack(fill="x", pady=(0, 10))
         self.fetch_btn = ttk.Button(controls, text="Atualizar Barchart", command=self.fetch)
         self.fetch_btn.pack(side="left")
         ttk.Checkbutton(
@@ -56,6 +62,34 @@ class App(tk.Tk):
         ttk.Button(controls, text="Exportar CSV", command=self.export_csv).pack(side="left", padx=(8, 0))
         ttk.Button(controls, text="Salvar JSON", command=self.save_snapshot_json).pack(side="left", padx=(8, 0))
         ttk.Button(controls, text="Sobre", command=self.show_about).pack(side="right")
+
+        browser = ttk.LabelFrame(root, text="Edge e extensões", padding=10)
+        browser.pack(fill="x", pady=(0, 10))
+        ttk.Checkbutton(
+            browser,
+            text="Usar minhas extensões do Edge (recomendado para Cold Turkey)",
+            variable=self.use_edge_extensions,
+        ).grid(row=0, column=0, columnspan=3, sticky="w")
+
+        ttk.Label(browser, text="Perfil do Edge:").grid(row=1, column=0, sticky="w", pady=(8, 0))
+        self.edge_profile_combo = ttk.Combobox(
+            browser,
+            textvariable=self.edge_profile_var,
+            state="readonly",
+            width=48,
+        )
+        self.edge_profile_combo.grid(row=1, column=1, sticky="ew", padx=(8, 8), pady=(8, 0))
+        ttk.Button(
+            browser,
+            text="Detectar novamente",
+            command=self._reload_edge_profiles,
+        ).grid(row=1, column=2, sticky="e", pady=(8, 0))
+        ttk.Label(
+            browser,
+            textvariable=self.edge_extension_status_var,
+            foreground="#555",
+        ).grid(row=2, column=0, columnspan=3, sticky="w", pady=(6, 0))
+        browser.columnconfigure(1, weight=1)
 
         info = ttk.LabelFrame(root, text="Snapshot", padding=10)
         info.pack(fill="x")
@@ -118,18 +152,60 @@ class App(tk.Tk):
         if text:
             self.status_var.set(text)
 
+    def _reload_edge_profiles(self):
+        try:
+            profiles = list_edge_profiles()
+        except Exception as exc:
+            self.edge_profile_map = {}
+            self.edge_profile_combo["values"] = []
+            self.edge_extension_status_var.set(f"Não foi possível detectar perfis do Edge: {exc}")
+            return
+
+        self.edge_profile_map = {p.display_name: p.directory for p in profiles}
+        labels = list(self.edge_profile_map.keys())
+        self.edge_profile_combo["values"] = labels
+
+        preferred = next((p for p in profiles if p.has_cold_turkey), None)
+        if preferred is None and profiles:
+            preferred = profiles[0]
+
+        if preferred:
+            self.edge_profile_var.set(preferred.display_name)
+            if preferred.has_cold_turkey:
+                self.edge_extension_status_var.set(
+                    f"Cold Turkey detectado neste perfil. {preferred.extension_count} extensões serão copiadas para um perfil isolado da aplicação."
+                )
+            else:
+                self.edge_extension_status_var.set(
+                    f"{preferred.extension_count} extensões detectadas. Cold Turkey não foi localizado neste perfil; selecione outro perfil se necessário."
+                )
+        else:
+            self.edge_profile_var.set("")
+            self.edge_extension_status_var.set("Nenhum perfil do Edge com extensões foi encontrado.")
+
+    def _selected_edge_profile_dir(self) -> str:
+        label = self.edge_profile_var.get().strip()
+        return self.edge_profile_map.get(label, "Default")
+
+
     def fetch(self):
-        self.set_busy(True, "Abrindo o Barchart e capturando dados…")
+        self.set_busy(True, "Preparando o Edge e capturando dados do Barchart…")
         visible = bool(self.visible_browser.get())
+        use_extensions = bool(self.use_edge_extensions.get())
+        profile_dir = self._selected_edge_profile_dir()
         threading.Thread(
             target=self._fetch_worker,
-            args=(visible,),
+            args=(visible, use_extensions, profile_dir),
             daemon=True,
         ).start()
 
-    def _fetch_worker(self, visible: bool):
+    def _fetch_worker(self, visible: bool, use_extensions: bool, profile_dir: str):
         try:
-            client = BarchartBrowserClient(visible=visible)
+            client = BarchartBrowserClient(
+                visible=visible,
+                use_edge_extensions=use_extensions,
+                edge_profile_dir=profile_dir,
+            )
             records, official, meta = client.fetch()
             contracts = contracts_from_records(records, prefer_eod=True)
             snap = derive_levels(
@@ -171,10 +247,15 @@ class App(tk.Tk):
 
         self.refresh_output()
         warn = " | ".join(snap.warnings)
+        profile_meta = (meta or {}).get("edge_profile") or {}
+        profile_note = ""
+        if profile_meta:
+            cold = "Cold Turkey ✓" if profile_meta.get("cold_turkey") else "Cold Turkey não detectado"
+            profile_note = f" Perfil Edge: {profile_meta.get('source_profile', '—')} · {profile_meta.get('extension_count', 0)} extensões · {cold}."
         if warn:
-            self.set_busy(False, f"Coleta concluída: {len(snap.exposures)} strikes. {warn}")
+            self.set_busy(False, f"Coleta concluída: {len(snap.exposures)} strikes.{profile_note} {warn}")
         else:
-            self.set_busy(False, f"Coleta concluída: {len(snap.exposures)} strikes.")
+            self.set_busy(False, f"Coleta concluída: {len(snap.exposures)} strikes.{profile_note}")
 
     def _overrides(self):
         vals = {}
@@ -292,6 +373,7 @@ class App(tk.Tk):
             "Sobre — EWZ GEX → WIN Desktop",
             f"{APP_TITLE}\nVersão {APP_VERSION}\n\n"
             "Aplicação complementar ao indicador EWZ GEX → WIN.\n"
+            "Inclui modo de compatibilidade com extensões do Edge, inclusive Cold Turkey.\n"
             "Build alpha: os níveis e a coleta ainda estão em validação.",
         )
 
