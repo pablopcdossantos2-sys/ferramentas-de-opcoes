@@ -1,0 +1,47 @@
+name: Sync tool reference images
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/sync-reference-images.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download documented reference images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/tool-screenshots
+
+          curl -fL --retry 3             "https://s3.tradingview.com/q/qeonhPAK_mid.webp?v=1789252458"             -o assets/tool-screenshots/quantedoptions-levels-qo.webp
+
+          curl -fL --retry 3             "https://s3.tradingview.com/u/UkEpZssf_mid.webp?v=1760102319"             -o assets/tool-screenshots/options-levels.webp
+
+          curl -fL --retry 3             "https://s3.tradingview.com/g/gAwvM2uE_mid.webp?v=1757437096"             -o assets/tool-screenshots/support-resistance-options-data.webp
+
+          test -s assets/tool-screenshots/quantedoptions-levels-qo.webp
+          test -s assets/tool-screenshots/options-levels.webp
+          test -s assets/tool-screenshots/support-resistance-options-data.webp
+
+      - name: Commit images
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/tool-screenshots/*.webp
+          if git diff --cached --quiet; then
+            echo "Reference images already up to date."
+          else
+            git commit -m "assets: add TradingView reference images"
+            git push
+          fi
