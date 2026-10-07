@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Instalar — EWZ Mapa de Opções em Aberto — tutorial didático de instalação.">
+  <title>Instalar — EWZ Mapa de Opções em Aberto — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação do tutorial">
+        <a href="index.html">Ficha técnica</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#instalacao">Instalação</a>
+        <a href="#validacao">Validação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero tutorial-hero">
+      <div class="wrap">
+        <a class="back-link" href="index.html">← Voltar à ficha da ferramenta</a>
+        <p class="eyebrow">TUTORIAL DIDÁTICO · INSTALAÇÃO</p>
+        <h1>Instalar — EWZ Mapa de Opções em Aberto</h1>
+        <p class="hero-copy">Indicador Pine v6: não exige Python e pode ser instalado diretamente no TradingView.</p>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap tutorial-layout">
+        <aside class="detail-toc tutorial-toc">
+          <strong>Neste tutorial</strong>
+          <a href="#requisitos">O que você precisa</a>
+          <a href="#instalacao">Instalação</a>
+          <a href="#uso">Primeiro uso</a>
+          <a href="#validacao">Como validar</a>
+          <a href="#limites">Limitações</a>
+        </aside>
+        <div class="tutorial-content">
+  <article id="requisitos" class="detail-block"><p class="eyebrow">REQUISITOS</p><h2>O que você precisa</h2><ul><li>Conta no TradingView.</li><li>Gráfico do EWZ cotado em USD.</li><li>Arquivo <a href="source/EWZ_Mapa_Opcoes.pine"><code>source/EWZ_Mapa_Opcoes.pine</code></a>.</li><li>Para uso real, cadeia de opções convertida para o formato do indicador.</li></ul></article>
+  <article id="instalacao" class="detail-block"><p class="eyebrow">PASSOS 1 E 2</p><h2>Abrir o gráfico e instalar o Pine</h2><ol><li>Entre no TradingView e pesquise por <strong>EWZ</strong>.</li><li>Abra um gráfico do ETF cotado em dólares e deixe espaço à direita das velas.</li><li>Abra o <strong>Pine Editor</strong>.</li><li>Copie todo o conteúdo de <code>EWZ_Mapa_Opcoes.pine</code>, desde <code>//@version=6</code>.</li><li>Cole no editor, salve e dê um nome ao indicador.</li><li>Clique em <strong>Adicionar ao gráfico</strong>.</li></ol></article>
+  <article id="uso" class="detail-block"><p class="eyebrow">PRIMEIRO USO</p><h2>Testar antes de usar dados reais</h2><ol><li>Abra as configurações do indicador.</li><li>Ative <strong>Demonstração — dados FICTÍCIOS</strong>.</li><li>Ajuste a escala se necessário.</li><li>Confirme que aparecem faixas entre aproximadamente USD 33 e USD 38 e um quadro de dados.</li></ol><p>A demonstração serve apenas para confirmar que o indicador está funcionando.</p><h2 class="tutorial-subtitle">Inserir dados reais</h2><p>Desative a demonstração e cole uma série por linha no formato:</p><pre><code>vencimento;tipo;strike;oi;premio;multiplicador</code></pre><p>Exemplo:</p><pre><code>2099-12-18;C;35;1000;1.20;100
+2099-12-18;P;35;800;0.95;100</code></pre><p>Use <code>C</code> para call, <code>P</code> para put, ponto decimal, <code>NA</code> quando o prêmio estiver ausente e informe a data real de referência do OI.</p></article>
+  <article id="validacao" class="detail-block"><p class="eyebrow">VALIDAÇÃO</p><h2>Como saber se deu certo</h2><ul><li>O código compila.</li><li>O indicador reconhece o gráfico do EWZ.</li><li>As faixas aparecem à direita.</li><li>O quadro mostra OI e valores.</li><li>Entradas inválidas geram mensagem em vez de resultados silenciosamente incorretos.</li></ul></article>
+  <article id="limites" class="detail-block"><p class="eyebrow">LIMITES</p><h2>Snapshot manual</h2><p>O indicador não busca a cadeia automaticamente. Os dados precisam ser atualizados manualmente para cada novo snapshot.</p></article></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="index.html">Ficha da ferramenta ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
