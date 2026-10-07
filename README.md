@@ -102,3 +102,16 @@ Cada ferramenta catalogada possui um arquivo `TUTORIAL-INSTALACAO.md` dentro de 
 Quando a instalação completa não pode ser reproduzida com os arquivos atualmente preservados, o tutorial declara isso explicitamente em vez de inventar dependências ou comandos. Essa regra é especialmente importante para ferramentas que dependem de geradores externos de dados ou de componentes ainda não arquivados.
 
 A partir de agora, toda nova ferramenta adicionada ao banco deve possuir também um tutorial de instalação.
+
+
+## Referências visuais
+
+Quando uma ferramenta analisada vier acompanhada de uma imagem, captura de tela ou exemplo visual relevante, esse material também deve fazer parte do acervo sempre que puder ser preservado adequadamente.
+
+As imagens ficam em `assets/tool-screenshots/`, devem registrar a origem e são exibidas tanto no portfólio quanto na ficha individual da ferramenta. A imagem serve para explicar a interface e o uso da solução; não deve ser apresentada como prova de desempenho.
+
+Atualmente há referências visuais catalogadas para:
+
+- quantedOptions Levels [qO];
+- Options Levels;
+- Support and Resistance levels from Options Data.
