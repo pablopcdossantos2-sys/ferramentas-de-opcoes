@@ -539,3 +539,51 @@ footer a { color:var(--accent); font-weight:700; font-size:13px; }
   .concept-dialog-foot { align-items: stretch; flex-direction: column; }
   .concept-dialog-foot .btn { text-align: center; }
 }
+
+
+/* Tool visual references */
+.card-visual {
+  display:block;
+  margin: 0 0 20px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--panel-2);
+}
+.card-visual img {
+  display:block;
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  object-position:center;
+  transition:transform .2s ease;
+}
+.card-visual:hover img { transform:scale(1.015); }
+
+.visual-reference { overflow:hidden; }
+.tool-figure { margin:0; }
+.tool-figure > a {
+  display:block;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#060a10;
+}
+.tool-figure img {
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:660px;
+  object-fit:contain;
+  margin:0 auto;
+}
+.tool-figure figcaption {
+  margin-top:12px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.55;
+}
+.tool-figure figcaption a {
+  color:var(--accent);
+  font-weight:700;
+}
