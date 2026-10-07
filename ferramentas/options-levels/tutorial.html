@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Instalar — Options Levels — tutorial didático de instalação.">
+  <title>Instalar — Options Levels — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação do tutorial">
+        <a href="index.html">Ficha técnica</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#instalacao">Instalação</a>
+        <a href="#validacao">Validação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero tutorial-hero">
+      <div class="wrap">
+        <a class="back-link" href="index.html">← Voltar à ficha da ferramenta</a>
+        <p class="eyebrow">TUTORIAL DIDÁTICO · INSTALAÇÃO</p>
+        <h1>Instalar — Options Levels</h1>
+        <p class="hero-copy">Guia para instalar o Pine e fornecer a lista ordenada dos 13 níveis.</p>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap tutorial-layout">
+        <aside class="detail-toc tutorial-toc">
+          <strong>Neste tutorial</strong>
+          <a href="#requisitos">O que você precisa</a>
+          <a href="#instalacao">Instalação</a>
+          <a href="#uso">Primeiro uso</a>
+          <a href="#validacao">Como validar</a>
+          <a href="#limites">Limitações</a>
+        </aside>
+        <div class="tutorial-content">
+  <article id="requisitos" class="detail-block"><p class="eyebrow">REQUISITOS</p><h2>O que você precisa</h2><ul><li>Conta no TradingView.</li><li>Arquivo <a href="source/Options_Levels.pine"><code>source/Options_Levels.pine</code></a>.</li><li>Os 13 valores que deseja desenhar.</li></ul></article>
+  <article id="instalacao" class="detail-block"><p class="eyebrow">PASSO 1</p><h2>Instalar o indicador</h2><ol><li>Abra o TradingView e o gráfico desejado.</li><li>Abra o <strong>Pine Editor</strong>.</li><li>Copie o arquivo preservado no repositório e cole no editor.</li><li>Salve, dê um nome ao indicador e clique em <strong>Adicionar ao gráfico</strong>.</li></ol></article>
+  <article id="uso" class="detail-block"><p class="eyebrow">PASSOS 2 E 3</p><h2>Preparar e colar os dados</h2><p>A ordem deve ser exatamente:</p><ol><li>Call Wall</li><li>Put Wall</li><li>Gamma Flip</li><li>Dark Gamma</li><li>Whale 1</li><li>Whale 2</li><li>Whale 3</li><li>Whale 4</li><li>Whale 5</li><li>Upper Sigma 1</li><li>Upper Sigma 2</li><li>Lower Sigma 1</li><li>Lower Sigma 2</li></ol><p>Depois abra <strong>Configurações → Inputs</strong>, cole os 13 números no campo de níveis, confirme e ajuste os grupos visuais desejados.</p></article>
+  <article id="validacao" class="detail-block"><p class="eyebrow">VALIDAÇÃO</p><h2>Como saber se deu certo</h2><p>As linhas correspondentes aos níveis críticos, Whales e sigmas devem aparecer com seus rótulos. Se surgirem em posições absurdas, confira a ordem e o separador da lista.</p></article>
+  <article id="limites" class="detail-block"><p class="eyebrow">LIMITAÇÃO</p><h2>Os níveis são externos</h2><p>O script não calcula os 13 níveis; apenas recebe valores produzidos fora do indicador e os desenha.</p></article></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="index.html">Ficha da ferramenta ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
