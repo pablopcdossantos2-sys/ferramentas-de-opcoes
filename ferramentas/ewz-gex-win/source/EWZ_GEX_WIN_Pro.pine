@@ -124,42 +124,91 @@ f_project(float ewzLevel) =>
 
 
 // ============================================================================
-// 3) NÍVEIS GEX DO EWZ
-//    Marque/desmarque cada nível e informe o strike/preço ORIGINAL do EWZ.
+// 3) PONTE COM A APLICAÇÃO DESKTOP
+//    A GUI exporta uma única linha no formato EWZGEX1|chave=valor|...
+//    O modo manual continua disponível como fallback.
 // ============================================================================
 
-groupGex = "3. Níveis GEX do EWZ"
+groupBridge = "3. Aplicação desktop"
+
+levelInputMode = input.string(
+     "Bloco do aplicativo",
+     "Origem dos níveis",
+     options = ["Bloco do aplicativo", "Manual individual"],
+     group = groupBridge,
+     tooltip = "Use 'Bloco do aplicativo' para colar a linha EWZGEX1 gerada pela aplicação desktop. Use o modo manual como fallback."
+)
+
+appBlock = input.string(
+     "",
+     "Bloco EWZGEX1",
+     group = groupBridge,
+     tooltip = "Cole aqui a linha copiada pela aplicação EWZ GEX → WIN Desktop."
+)
+
+bool appBlockOk = str.startswith(appBlock, "EWZGEX1|")
+
+f_blockFloat(string key, float fallback) =>
+    float out = fallback
+    if appBlockOk
+        parts = str.split(appBlock, "|")
+        for i = 0 to array.size(parts) - 1
+            token = array.get(parts, i)
+            kv = str.split(token, "=")
+            if array.size(kv) >= 2 and array.get(kv, 0) == key
+                parsed = str.tonumber(array.get(kv, 1))
+                if not na(parsed)
+                    out := parsed
+    out
+
+// ============================================================================
+// 4) NÍVEIS GEX DO EWZ
+//    No modo manual, marque/desmarque cada nível e informe o preço ORIGINAL.
+// ============================================================================
+
+groupGex = "4. Níveis GEX do EWZ"
 
 showTeto = input.bool(true, "", inline = "teto", group = groupGex)
-gexTeto = input.float(0.0, "Call/Put teto", minval = 0.0, step = 0.01, inline = "teto", group = groupGex)
+gexTetoManual = input.float(0.0, "Call/Put teto", minval = 0.0, step = 0.01, inline = "teto", group = groupGex)
 
 showCall2 = input.bool(true, "", inline = "cw2", group = groupGex)
-gexCall2 = input.float(0.0, "Call Wall 2", minval = 0.0, step = 0.01, inline = "cw2", group = groupGex)
+gexCall2Manual = input.float(0.0, "Call Wall 2", minval = 0.0, step = 0.01, inline = "cw2", group = groupGex)
 
 showCall1 = input.bool(true, "", inline = "cw1", group = groupGex)
-gexCall1 = input.float(0.0, "Call Wall 1", minval = 0.0, step = 0.01, inline = "cw1", group = groupGex)
+gexCall1Manual = input.float(0.0, "Call Wall 1", minval = 0.0, step = 0.01, inline = "cw1", group = groupGex)
 
 showGammaRes = input.bool(true, "", inline = "gres", group = groupGex)
-gexGammaRes = input.float(0.0, "Gamma resistência", minval = 0.0, step = 0.01, inline = "gres", group = groupGex)
+gexGammaResManual = input.float(0.0, "Gamma resistência", minval = 0.0, step = 0.01, inline = "gres", group = groupGex)
 
 showGammaFlip = input.bool(true, "", inline = "gflip", group = groupGex)
-gexGammaFlip = input.float(0.0, "Gamma Flip", minval = 0.0, step = 0.01, inline = "gflip", group = groupGex)
+gexGammaFlipManual = input.float(0.0, "Gamma Flip", minval = 0.0, step = 0.01, inline = "gflip", group = groupGex)
 
 showGammaSup = input.bool(true, "", inline = "gsup", group = groupGex)
-gexGammaSup = input.float(0.0, "Gamma suporte", minval = 0.0, step = 0.01, inline = "gsup", group = groupGex)
+gexGammaSupManual = input.float(0.0, "Gamma suporte", minval = 0.0, step = 0.01, inline = "gsup", group = groupGex)
 
 showPut2 = input.bool(true, "", inline = "pw2", group = groupGex)
-gexPut2 = input.float(0.0, "Put Wall 2", minval = 0.0, step = 0.01, inline = "pw2", group = groupGex)
+gexPut2Manual = input.float(0.0, "Put Wall 2", minval = 0.0, step = 0.01, inline = "pw2", group = groupGex)
 
 showPutFloor = input.bool(true, "", inline = "pwf", group = groupGex)
-gexPutFloor = input.float(0.0, "Put Wall chão", minval = 0.0, step = 0.01, inline = "pwf", group = groupGex)
+gexPutFloorManual = input.float(0.0, "Put Wall chão", minval = 0.0, step = 0.01, inline = "pwf", group = groupGex)
+
+bool useAppBlock = levelInputMode == "Bloco do aplicativo" and appBlockOk
+
+gexTeto = useAppBlock ? f_blockFloat("teto", 0.0) : gexTetoManual
+gexCall2 = useAppBlock ? f_blockFloat("cw2", 0.0) : gexCall2Manual
+gexCall1 = useAppBlock ? f_blockFloat("cw1", 0.0) : gexCall1Manual
+gexGammaRes = useAppBlock ? f_blockFloat("gres", 0.0) : gexGammaResManual
+gexGammaFlip = useAppBlock ? f_blockFloat("flip", 0.0) : gexGammaFlipManual
+gexGammaSup = useAppBlock ? f_blockFloat("gsup", 0.0) : gexGammaSupManual
+gexPut2 = useAppBlock ? f_blockFloat("pw2", 0.0) : gexPut2Manual
+gexPutFloor = useAppBlock ? f_blockFloat("floor", 0.0) : gexPutFloorManual
 
 
 // ============================================================================
 // 4) VISUAL
 // ============================================================================
 
-groupVisual = "4. Visual"
+groupVisual = "5. Visual"
 
 showLabels = input.bool(true, "Mostrar nomes e preços nas linhas", group = groupVisual)
 labelOffset = input.int(2, "Deslocamento dos rótulos (barras)", minval = 0, maxval = 50, group = groupVisual)
@@ -352,7 +401,7 @@ if barstate.islast
 // 9) ALERTAS
 // ============================================================================
 
-groupAlerts = "5. Alertas"
+groupAlerts = "6. Alertas"
 
 proximityPct = input.float(
      0.10,
