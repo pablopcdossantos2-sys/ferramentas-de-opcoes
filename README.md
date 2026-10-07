@@ -89,3 +89,7 @@ No momento em que este portfólio foi criado, o próprio repositório `ferrament
 
 As marcações representam funcionalidades observadas no código ou na documentação analisada. Quando algo depende de um serviço externo não fornecido, isso é indicado explicitamente.
 
+
+## Glossário didático da matriz
+
+A Matriz funcional possui ícones de informação nos principais conceitos de opções. Ao clicar, o site abre uma explicação em linguagem didática com quatro blocos: definição simples, leitura prática, exemplo e cuidado de interpretação. O objetivo é permitir que leitores sem familiaridade prévia com opções compreendam a comparação antes de avaliar cada ferramenta.
