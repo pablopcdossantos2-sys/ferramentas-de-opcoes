@@ -43,5 +43,9 @@ jobs:
             echo "Reference images already up to date."
           else
             git commit -m "assets: add TradingView reference images"
-            git push
+            # The documentation may receive commits while this job is downloading.
+            # Rebase the image-only commit onto the newest main before pushing.
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
