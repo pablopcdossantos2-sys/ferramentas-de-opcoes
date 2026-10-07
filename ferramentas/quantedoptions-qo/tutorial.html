@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Instalar — quantedOptions Levels [qO] — tutorial didático de instalação.">
+  <title>Instalar — quantedOptions Levels [qO] — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação do tutorial">
+        <a href="index.html">Ficha técnica</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#instalacao">Instalação</a>
+        <a href="#validacao">Validação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero tutorial-hero">
+      <div class="wrap">
+        <a class="back-link" href="index.html">← Voltar à ficha da ferramenta</a>
+        <p class="eyebrow">TUTORIAL DIDÁTICO · INSTALAÇÃO</p>
+        <h1>Instalar — quantedOptions Levels [qO]</h1>
+        <p class="hero-copy">Instalação do componente Pine e uso do snapshot externo no TradingView.</p>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap tutorial-layout">
+        <aside class="detail-toc tutorial-toc">
+          <strong>Neste tutorial</strong>
+          <a href="#requisitos">O que você precisa</a>
+          <a href="#instalacao">Instalação</a>
+          <a href="#uso">Primeiro uso</a>
+          <a href="#validacao">Como validar</a>
+          <a href="#limites">Limitações</a>
+        </aside>
+        <div class="tutorial-content">
+  <article id="requisitos" class="detail-block"><p class="eyebrow">REQUISITOS</p><h2>O que você precisa</h2><ul><li>Conta no TradingView.</li><li>Arquivo <a href="source/quantedOptions_Levels_qO.pine"><code>source/quantedOptions_Levels_qO.pine</code></a>.</li><li>Um snapshot compatível para uso real.</li></ul></article>
+  <article id="instalacao" class="detail-block"><p class="eyebrow">PASSO 1</p><h2>Instalar o Pine</h2><ol><li>Abra um gráfico no TradingView.</li><li>Abra o <strong>Pine Editor</strong>.</li><li>Copie o código completo do arquivo preservado no repositório.</li><li>Apague o conteúdo atual do editor e cole o código.</li><li>Salve, dê um nome ao indicador e clique em <strong>Adicionar ao gráfico</strong>.</li></ol></article>
+  <article id="uso" class="detail-block"><p class="eyebrow">PASSOS 2 E 3</p><h2>Entender e inserir o snapshot</h2><p>O indicador não coleta a cadeia e não calcula sozinho Call Wall, Put Wall, Gamma Flip, GEX ou DEX. Ele espera um snapshot textual produzido externamente, com prefixo/versionamento como <code>qo1|</code>.</p><ol><li>Abra <strong>Configurações → Inputs</strong>.</li><li>Localize o campo destinado ao snapshot.</li><li>Cole o texto completo produzido pelo gerador compatível.</li><li>Confirme.</li><li>Verifique ticker, data/hora e níveis no header.</li></ol><h2 class="tutorial-subtitle">Outro ativo/proxy</h2><p>Use apenas pares reconhecidos pela lógica de conversão do script e confira o estado de conversão mostrado pelo indicador.</p></article>
+  <article id="validacao" class="detail-block"><p class="eyebrow">VALIDAÇÃO</p><h2>Como saber se deu certo</h2><ul><li>O Pine compila sem erro.</li><li>O snapshot é reconhecido.</li><li>Call Wall, Put Wall e Gamma Flip aparecem.</li><li>Top strikes e ladder são desenhados quando presentes.</li><li>O header não indica erro de parsing.</li></ul></article>
+  <article id="limites" class="detail-block"><p class="eyebrow">LIMITAÇÃO</p><h2>Gerador externo não incluído</h2><p>O repositório preserva o indicador Pine, não o gerador original de snapshots. A aquisição dos dados depende do ecossistema externo correspondente.</p></article></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="index.html">Ficha da ferramenta ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
