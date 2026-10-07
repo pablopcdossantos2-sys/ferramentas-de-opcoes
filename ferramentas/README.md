@@ -11,7 +11,9 @@ Sempre que uma nova ferramenta relacionada a opções for anexada ou analisada, 
 3. documentação/origem, quando fornecida;
 4. uma ficha de análise;
 5. uma entrada em `catalogo.json`;
-6. inclusão no web-portfólio comparativo da raiz.
+6. inclusão no web-portfólio comparativo da raiz;
+7. um tutorial didático de instalação em `tutorial.html`;
+8. referências visuais, quando tiverem sido fornecidas ou existirem como parte relevante da documentação.
 
 ## Ferramentas catalogadas
 
