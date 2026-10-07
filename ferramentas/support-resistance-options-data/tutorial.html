@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Instalar — Support and Resistance levels from Options Data — tutorial didático de instalação.">
+  <title>Instalar — Support and Resistance levels from Options Data — Ferramentas de Opções</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="../../index.html#top"><span class="brand-mark">ƒ</span><span>Ferramentas de Opções</span></a>
+      <nav aria-label="Navegação do tutorial">
+        <a href="index.html">Ficha técnica</a>
+        <a href="#requisitos">Requisitos</a>
+        <a href="#instalacao">Instalação</a>
+        <a href="#validacao">Validação</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Alternar tema">◐</button>
+    </div>
+  </header>
+  <main>
+    <section class="tool-detail-hero tutorial-hero">
+      <div class="wrap">
+        <a class="back-link" href="index.html">← Voltar à ficha da ferramenta</a>
+        <p class="eyebrow">TUTORIAL DIDÁTICO · INSTALAÇÃO</p>
+        <h1>Instalar — Support and Resistance levels from Options Data</h1>
+        <p class="hero-copy">Instalação do Pine, entrada da string externa e configuração dos alertas.</p>
+      </div>
+    </section>
+    <section class="section detail-section">
+      <div class="wrap tutorial-layout">
+        <aside class="detail-toc tutorial-toc">
+          <strong>Neste tutorial</strong>
+          <a href="#requisitos">O que você precisa</a>
+          <a href="#instalacao">Instalação</a>
+          <a href="#uso">Primeiro uso</a>
+          <a href="#validacao">Como validar</a>
+          <a href="#limites">Limitações</a>
+        </aside>
+        <div class="tutorial-content">
+  <article id="requisitos" class="detail-block"><p class="eyebrow">REQUISITOS</p><h2>O que você precisa</h2><ul><li>Conta no TradingView.</li><li>Arquivo <a href="source/Support_and_Resistance_levels_from_Options_Data.pine"><code>source/Support_and_Resistance_levels_from_Options_Data.pine</code></a>.</li><li>Uma string compatível com os campos esperados.</li></ul></article>
+  <article id="instalacao" class="detail-block"><p class="eyebrow">PASSO 1</p><h2>Instalar o código</h2><ol><li>Abra um gráfico no TradingView.</li><li>Abra o <strong>Pine Editor</strong>.</li><li>Copie todo o arquivo preservado no repositório.</li><li>Cole no editor, salve, dê um nome e clique em <strong>Adicionar ao gráfico</strong>.</li></ol></article>
+  <article id="uso" class="detail-block"><p class="eyebrow">PASSOS 2 A 4</p><h2>Inserir os dados e configurar alertas</h2><p>A string por ticker reúne S1/R1, Implied Move, Put/Call Wall, Gamma Flip, IV, Put/Call Ratio, tendência, atividade, Walls de curto prazo e anteriores, Vanna ± e stop sugerido.</p><ol><li>Abra <strong>Configurações → Inputs</strong>.</li><li>Cole a string completa preservando separadores e ordem.</li><li>Confirme e verifique se os níveis correspondem ao ticker do gráfico.</li><li>Para alertas, abra <strong>Criar alerta</strong>, selecione o indicador, escolha a condição e configure frequência/notificação.</li></ol></article>
+  <article id="validacao" class="detail-block"><p class="eyebrow">VALIDAÇÃO</p><h2>Como saber se deu certo</h2><ul><li>O Pine compila.</li><li>Os níveis principais aparecem.</li><li>O painel mostra métricas coerentes com o ticker.</li><li>As condições de alerta ficam disponíveis.</li></ul></article>
+  <article id="limites" class="detail-block"><p class="eyebrow">LIMITAÇÃO</p><h2>Gerador externo não incluído</h2><p>A instalação do Pine não instala nem reproduz o gerador externo dos 17 campos. Sem uma fonte compatível, o indicador não preenche sozinho as métricas.</p></article></div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-grid"><div><strong>Ferramentas de Opções</strong><p>Banco de dados técnico comparativo.</p></div><a href="index.html">Ficha da ferramenta ↑</a></div></footer>
+  <script src="../../app.js"></script>
+</body>
+</html>
