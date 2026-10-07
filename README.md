@@ -93,3 +93,12 @@ As marcações representam funcionalidades observadas no código ou na documenta
 ## Glossário didático da matriz
 
 A Matriz funcional possui ícones de informação nos principais conceitos de opções. Ao clicar, o site abre uma explicação em linguagem didática com quatro blocos: definição simples, leitura prática, exemplo e cuidado de interpretação. O objetivo é permitir que leitores sem familiaridade prévia com opções compreendam a comparação antes de avaliar cada ferramenta.
+
+
+## Tutoriais de instalação
+
+Cada ferramenta catalogada possui um arquivo `TUTORIAL-INSTALACAO.md` dentro de sua própria pasta. Os tutoriais são escritos para usuários com pouca familiaridade com terminal, GitHub ou Pine Script.
+
+Quando a instalação completa não pode ser reproduzida com os arquivos atualmente preservados, o tutorial declara isso explicitamente em vez de inventar dependências ou comandos. Essa regra é especialmente importante para ferramentas que dependem de geradores externos de dados ou de componentes ainda não arquivados.
+
+A partir de agora, toda nova ferramenta adicionada ao banco deve possuir também um tutorial de instalação.
