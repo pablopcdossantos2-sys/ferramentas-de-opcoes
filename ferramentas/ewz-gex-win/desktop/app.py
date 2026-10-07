@@ -10,11 +10,12 @@ from barchart_client import BARCHART_URL, BarchartBrowserClient
 from gex_core import LEVEL_SPECS, contracts_from_records, derive_levels, format_export_block
 
 APP_TITLE = "EWZ GEX → WIN Desktop"
+APP_VERSION = "0.1.0-alpha.1"
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title(APP_TITLE)
+        self.title(f"{APP_TITLE} {APP_VERSION}")
         self.geometry("980x720")
         self.minsize(860, 620)
         self.snapshot = None
@@ -53,6 +54,8 @@ class App(tk.Tk):
         ).pack(side="left", padx=12)
         ttk.Button(controls, text="Importar JSON", command=self.import_json).pack(side="left")
         ttk.Button(controls, text="Exportar CSV", command=self.export_csv).pack(side="left", padx=(8, 0))
+        ttk.Button(controls, text="Salvar JSON", command=self.save_snapshot_json).pack(side="left", padx=(8, 0))
+        ttk.Button(controls, text="Sobre", command=self.show_about).pack(side="right")
 
         info = ttk.LabelFrame(root, text="Snapshot", padding=10)
         info.pack(fill="x")
@@ -231,6 +234,66 @@ class App(tk.Tk):
             self._apply_snapshot(snap, {"api_url": str(path)})
         except Exception as exc:
             self._error(str(exc))
+
+
+    def save_snapshot_json(self):
+        if not self.snapshot:
+            messagebox.showinfo(APP_TITLE, "Atualize ou importe dados primeiro.")
+            return
+
+        path = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON", "*.json")],
+            initialfile="EWZ_GEX_snapshot.json",
+        )
+        if not path:
+            return
+
+        payload = {
+            "app_version": APP_VERSION,
+            "symbol": self.snapshot.symbol,
+            "spot": self.snapshot.spot,
+            "source_url": self.snapshot.source_url,
+            "source_timestamp": self.snapshot.source_timestamp,
+            "expirations": self.snapshot.expirations,
+            "warnings": self.snapshot.warnings,
+            "levels": [
+                {
+                    "key": lv.key,
+                    "label": lv.label,
+                    "value": self._overrides().get(lv.key),
+                    "origin": lv.origin,
+                    "confidence": lv.confidence,
+                    "note": lv.note,
+                }
+                for lv in self.snapshot.levels
+            ],
+            "exposures": [
+                {
+                    "strike": row.strike,
+                    "call_gex": row.call_gex,
+                    "put_gex": row.put_gex,
+                    "net_gex": row.net_gex,
+                    "call_oi": row.call_oi,
+                    "put_oi": row.put_oi,
+                }
+                for row in self.snapshot.exposures
+            ],
+            "tradingview_block": format_export_block(self.snapshot, self._overrides()),
+        }
+        Path(path).write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        self.status_var.set(f"Snapshot JSON salvo em {path}")
+
+    def show_about(self):
+        messagebox.showinfo(
+            "Sobre — EWZ GEX → WIN Desktop",
+            f"{APP_TITLE}\nVersão {APP_VERSION}\n\n"
+            "Aplicação complementar ao indicador EWZ GEX → WIN.\n"
+            "Build alpha: os níveis e a coleta ainda estão em validação.",
+        )
 
     def export_csv(self):
         if not self.snapshot:
