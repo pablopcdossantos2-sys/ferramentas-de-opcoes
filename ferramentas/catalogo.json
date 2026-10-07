@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -21,13 +21,18 @@
       "tradingview": true,
       "automation": "alta, condicionada ao provedor",
       "source": [
+        "ferramentas/ewz-gex-win/desktop/app.py",
+        "ferramentas/ewz-gex-win/desktop/barchart_client.py",
+        "ferramentas/ewz-gex-win/desktop/gex_core.py",
         "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
       ],
-      "status": "protótipo",
+      "status": "alpha funcional — build Windows gerado por GitHub Actions; coleta e níveis ainda em validação",
       "page": "ferramentas/ewz-gex-win/index.html",
       "role": "primary",
       "installation_tutorial": "ferramentas/ewz-gex-win/tutorial.html",
-      "visual_assets": []
+      "visual_assets": [],
+      "build_workflow": ".github/workflows/build-ewz-gex-win-desktop.yml",
+      "export_format": "EWZGEX1"
     },
     {
       "id": "mapa-de-opcoes",
