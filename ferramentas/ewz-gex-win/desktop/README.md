@@ -9,7 +9,8 @@ Aplicação desktop/GUI complementar ao indicador Pine do projeto principal.
 ## Arquitetura
 
 - **Tkinter** para a GUI, evitando frameworks visuais pesados.
-- **Playwright + Microsoft Edge instalado no Windows** para carregar a página real do Barchart com JavaScript e reutilizar uma sessão persistente.
+- **Playwright + Microsoft Edge instalado no Windows** para carregar a página real do Barchart com JavaScript.
+- **Compatibilidade com extensões do Edge**: a aplicação detecta os perfis do Edge, identifica o Cold Turkey pelo ID oficial da extensão no Edge e copia extensões + estado de extensão para um perfil isolado de automação.
 - Captura das respostas JSON de opções utilizadas pela própria página.
 - Fallback para uma requisição same-origin disparada dentro da sessão do navegador.
 - Agregação local de GEX por strike.
@@ -40,6 +41,23 @@ python app.py
 ```
 
 Não é necessário instalar o Chromium do Playwright: o aplicativo usa o Microsoft Edge já instalado.
+
+## Compatibilidade com Cold Turkey e outras extensões
+
+A versão `0.1.1-alpha.1` evita abrir um Edge "limpo" quando o modo de extensões está ativado.
+
+A aplicação:
+
+1. detecta os perfis locais do Microsoft Edge;
+2. identifica quantas extensões existem em cada perfil;
+3. detecta especificamente a extensão Cold Turkey do Edge pelo ID oficial `jfphahkinplobmabmgjmjgflbhjjddeb`;
+4. copia as extensões e os arquivos de estado necessários para `%USERPROFILE%\.ewz-gex-win\edge-with-extensions`;
+5. inicia o Edge por esse perfil dedicado;
+6. remove apenas o argumento padrão do Playwright que desabilitaria extensões.
+
+O perfil normal do usuário não é automatizado diretamente. Isso evita conflito de lock com um Edge já aberto e reduz o risco de corromper o perfil de navegação. Histórico, senhas e cookies normais não são copiados deliberadamente; somente dados necessários à instalação/estado de extensões são sincronizados.
+
+Se o Cold Turkey não aparecer como detectado na GUI, selecione outro perfil do Edge e use **Detectar novamente**.
 
 ## Testes
 
