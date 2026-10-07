@@ -140,7 +140,7 @@ class App(tk.Tk):
         ttk.Button(actions, text="Copiar bloco", command=self.copy_output).pack(side="left", padx=8)
         ttk.Label(
             actions,
-            text="Cole o bloco em 'Bloco do aplicativo' no indicador Pine.",
+            text="No TradingView: Configurações do indicador → Aplicação desktop → Bloco EWZGEX1. NÃO cole no código Pine.",
         ).pack(side="left", padx=8)
 
         ttk.Label(root, textvariable=self.status_var, foreground="#555").pack(
@@ -293,7 +293,7 @@ class App(tk.Tk):
         self.clipboard_clear()
         self.clipboard_append(text)
         self.update()
-        self.status_var.set("Bloco copiado para a área de transferência.")
+        self.status_var.set("Bloco copiado. No TradingView, cole em Configurações do indicador → Bloco EWZGEX1; não cole no código Pine.")
 
     def import_json(self):
         path = filedialog.askopenfilename(
