@@ -1,5 +1,5 @@
 {
-  "schema_version": 8,
+  "schema_version": 9,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -22,6 +22,7 @@
       "automation": "alta, condicionada ao provedor",
       "source": [
         "ferramentas/ewz-gex-win/desktop/app.py",
+        "ferramentas/ewz-gex-win/desktop/edge_profiles.py",
         "ferramentas/ewz-gex-win/desktop/barchart_client.py",
         "ferramentas/ewz-gex-win/desktop/gex_core.py",
         "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
@@ -33,7 +34,12 @@
       "visual_assets": [],
       "build_workflow": ".github/workflows/build-ewz-gex-win-desktop.yml",
       "export_format": "EWZGEX1",
-      "version": "0.1.0-alpha.1"
+      "version": "0.1.1-alpha.1",
+      "browser_compatibility": {
+        "browser": "Microsoft Edge",
+        "mode": "perfil isolado com extensões copiadas do perfil selecionado",
+        "cold_turkey_extension_id": "jfphahkinplobmabmgjmjgflbhjjddeb"
+      }
     },
     {
       "id": "mapa-de-opcoes",
