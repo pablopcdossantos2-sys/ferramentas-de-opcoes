@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -26,7 +26,7 @@
       "status": "protótipo",
       "page": "ferramentas/ewz-gex-win/index.html",
       "role": "primary",
-      "installation_tutorial": "ferramentas/ewz-gex-win/TUTORIAL-INSTALACAO.md",
+      "installation_tutorial": "ferramentas/ewz-gex-win/tutorial.html",
       "visual_assets": []
     },
     {
@@ -48,7 +48,7 @@
       "status": "documentado / implementação externa ao catálogo",
       "page": "ferramentas/mapa-de-opcoes/index.html",
       "role": "complementary",
-      "installation_tutorial": "ferramentas/mapa-de-opcoes/TUTORIAL-INSTALACAO.md",
+      "installation_tutorial": "ferramentas/mapa-de-opcoes/tutorial.html",
       "visual_assets": []
     },
     {
@@ -74,7 +74,7 @@
       "status": "v1.0 recebido; compilação final no TradingView não confirmada no guia",
       "page": "ferramentas/ewz-mapa-opcoes-oi/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/ewz-mapa-opcoes-oi/TUTORIAL-INSTALACAO.md",
+      "installation_tutorial": "ferramentas/ewz-mapa-opcoes-oi/tutorial.html",
       "visual_assets": []
     },
     {
@@ -99,7 +99,7 @@
       "status": "código recebido para análise",
       "page": "ferramentas/quantedoptions-qo/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/quantedoptions-qo/TUTORIAL-INSTALACAO.md",
+      "installation_tutorial": "ferramentas/quantedoptions-qo/tutorial.html",
       "visual_assets": [
         {
           "path": "assets/tool-screenshots/quantedoptions-levels-qo.webp",
@@ -130,7 +130,7 @@
       "status": "código recebido para análise",
       "page": "ferramentas/options-levels/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/options-levels/TUTORIAL-INSTALACAO.md",
+      "installation_tutorial": "ferramentas/options-levels/tutorial.html",
       "visual_assets": [
         {
           "path": "assets/tool-screenshots/options-levels.webp",
@@ -163,7 +163,7 @@
       "status": "código recebido para análise",
       "page": "ferramentas/support-resistance-options-data/index.html",
       "role": "reference",
-      "installation_tutorial": "ferramentas/support-resistance-options-data/TUTORIAL-INSTALACAO.md",
+      "installation_tutorial": "ferramentas/support-resistance-options-data/tutorial.html",
       "visual_assets": [
         {
           "path": "assets/tool-screenshots/support-resistance-options-data.webp",
