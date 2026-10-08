@@ -212,6 +212,13 @@ gexPutFloor = useAppBlock ? f_blockFloat("floor", 0.0) : gexPutFloorManual
 
 groupVisual = "5. Visual"
 
+showProjectedLines = input.bool(
+     true,
+     "Mostrar linhas dos níveis projetados no gráfico de preço",
+     group = groupVisual,
+     tooltip = "Desenha no próprio gráfico do WIN linhas horizontais nos preços calculados a partir dos níveis de gamma do EWZ."
+)
+
 showLabels = input.bool(true, "Mostrar nomes e preços nas linhas", group = groupVisual)
 labelOffset = input.int(2, "Deslocamento dos rótulos (barras)", minval = 0, maxval = 50, group = groupVisual)
 
@@ -255,28 +262,28 @@ pGammaSup = f_project(gexGammaSup)
 pPut2 = f_project(gexPut2)
 pPutFloor = f_project(gexPutFloor)
 
-vTeto = showTeto and inDisplayWindow ? pTeto : na
-vCall2 = showCall2 and inDisplayWindow ? pCall2 : na
-vCall1 = showCall1 and inDisplayWindow ? pCall1 : na
-vGammaRes = showGammaRes and inDisplayWindow ? pGammaRes : na
-vGammaFlip = showGammaFlip and inDisplayWindow ? pGammaFlip : na
-vGammaSup = showGammaSup and inDisplayWindow ? pGammaSup : na
-vPut2 = showPut2 and inDisplayWindow ? pPut2 : na
-vPutFloor = showPutFloor and inDisplayWindow ? pPutFloor : na
+vTeto = showProjectedLines and showTeto and inDisplayWindow ? pTeto : na
+vCall2 = showProjectedLines and showCall2 and inDisplayWindow ? pCall2 : na
+vCall1 = showProjectedLines and showCall1 and inDisplayWindow ? pCall1 : na
+vGammaRes = showProjectedLines and showGammaRes and inDisplayWindow ? pGammaRes : na
+vGammaFlip = showProjectedLines and showGammaFlip and inDisplayWindow ? pGammaFlip : na
+vGammaSup = showProjectedLines and showGammaSup and inDisplayWindow ? pGammaSup : na
+vPut2 = showProjectedLines and showPut2 and inDisplayWindow ? pPut2 : na
+vPutFloor = showProjectedLines and showPutFloor and inDisplayWindow ? pPutFloor : na
 
 
 // ============================================================================
 // 6) LINHAS
 // ============================================================================
 
-plot(vTeto, "Call/Put teto", color = color.red, linewidth = 2, style = plot.style_linebr)
-plot(vCall2, "Call Wall 2", color = color.new(color.red, 25), linewidth = 2, style = plot.style_linebr)
-plot(vCall1, "Call Wall 1", color = color.orange, linewidth = 2, style = plot.style_linebr)
-plot(vGammaRes, "Gamma resistência", color = color.fuchsia, linewidth = 2, style = plot.style_linebr)
-plot(vGammaFlip, "Gamma Flip", color = color.yellow, linewidth = 3, style = plot.style_linebr)
-plot(vGammaSup, "Gamma suporte", color = color.aqua, linewidth = 2, style = plot.style_linebr)
-plot(vPut2, "Put Wall 2", color = color.new(color.green, 25), linewidth = 2, style = plot.style_linebr)
-plot(vPutFloor, "Put Wall chão", color = color.green, linewidth = 3, style = plot.style_linebr)
+plot(vTeto, "WIN projetado — Call/Put teto", color = color.red, linewidth = 2, style = plot.style_linebr)
+plot(vCall2, "WIN projetado — Call Wall 2", color = color.new(color.red, 25), linewidth = 2, style = plot.style_linebr)
+plot(vCall1, "WIN projetado — Call Wall 1", color = color.orange, linewidth = 2, style = plot.style_linebr)
+plot(vGammaRes, "WIN projetado — Gamma resistência", color = color.fuchsia, linewidth = 2, style = plot.style_linebr)
+plot(vGammaFlip, "WIN projetado — Gamma Flip", color = color.yellow, linewidth = 3, style = plot.style_linebr)
+plot(vGammaSup, "WIN projetado — Gamma suporte", color = color.aqua, linewidth = 2, style = plot.style_linebr)
+plot(vPut2, "WIN projetado — Put Wall 2", color = color.new(color.green, 25), linewidth = 2, style = plot.style_linebr)
+plot(vPutFloor, "WIN projetado — Put Wall chão", color = color.green, linewidth = 3, style = plot.style_linebr)
 
 bgcolor(
      showFlipRegime and not na(vGammaFlip)
@@ -292,11 +299,14 @@ bgcolor(
 // 7) RÓTULOS
 // ============================================================================
 
-f_updateLabel(label id, float y, string levelName, color c) =>
+f_updateLabel(label id, float y, float ewzLevel, string levelName, color c) =>
     label out = id
     if barstate.islast
         if showLabels and not na(y)
-            string txt = levelName + "  " + str.tostring(y, format.mintick)
+            float pctValue = not na(ewzLevel) and ewzLevel > 0 ? f_pctFromRef(ewzLevel) : na
+            string pctTxt = not na(pctValue) ? " · Δ " + str.tostring(pctValue * 100.0, "#.##") + "%" : ""
+            string ewzTxt = not na(ewzLevel) and ewzLevel > 0 ? " · EWZ " + str.tostring(ewzLevel, "#.##") : ""
+            string txt = levelName + " · WIN " + str.tostring(y, format.mintick) + ewzTxt + pctTxt
             if na(out)
                 out := label.new(
                      bar_index + labelOffset,
@@ -328,14 +338,14 @@ var label lblGammaSup = na
 var label lblPut2 = na
 var label lblPutFloor = na
 
-lblTeto := f_updateLabel(lblTeto, vTeto, "Teto", color.red)
-lblCall2 := f_updateLabel(lblCall2, vCall2, "Call Wall 2", color.red)
-lblCall1 := f_updateLabel(lblCall1, vCall1, "Call Wall 1", color.orange)
-lblGammaRes := f_updateLabel(lblGammaRes, vGammaRes, "Gamma Resist.", color.fuchsia)
-lblGammaFlip := f_updateLabel(lblGammaFlip, vGammaFlip, "Gamma Flip", color.yellow)
-lblGammaSup := f_updateLabel(lblGammaSup, vGammaSup, "Gamma Suporte", color.aqua)
-lblPut2 := f_updateLabel(lblPut2, vPut2, "Put Wall 2", color.green)
-lblPutFloor := f_updateLabel(lblPutFloor, vPutFloor, "Put Wall chão", color.green)
+lblTeto := f_updateLabel(lblTeto, pTeto, gexTeto, "Teto", color.red)
+lblCall2 := f_updateLabel(lblCall2, pCall2, gexCall2, "Call Wall 2", color.red)
+lblCall1 := f_updateLabel(lblCall1, pCall1, gexCall1, "Call Wall 1", color.orange)
+lblGammaRes := f_updateLabel(lblGammaRes, pGammaRes, gexGammaRes, "Gamma Resist.", color.fuchsia)
+lblGammaFlip := f_updateLabel(lblGammaFlip, pGammaFlip, gexGammaFlip, "Gamma Flip", color.yellow)
+lblGammaSup := f_updateLabel(lblGammaSup, pGammaSup, gexGammaSup, "Gamma Suporte", color.aqua)
+lblPut2 := f_updateLabel(lblPut2, pPut2, gexPut2, "Put Wall 2", color.green)
+lblPutFloor := f_updateLabel(lblPutFloor, pPutFloor, gexPutFloor, "Put Wall chão", color.green)
 
 
 // ============================================================================
