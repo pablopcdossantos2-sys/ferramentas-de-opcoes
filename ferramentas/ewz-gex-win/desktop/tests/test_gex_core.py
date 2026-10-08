@@ -3,7 +3,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from gex_core import contracts_from_records, derive_levels, format_export_block, parse_export_block
+from gex_core import (
+    contracts_from_records,
+    derive_levels,
+    extract_market_prices,
+    format_export_block,
+    level_distance_pct,
+    parse_export_block,
+    project_level_1to1,
+)
 
 def sample_records():
     rows = []
@@ -39,3 +47,24 @@ def test_export_roundtrip():
     assert parsed["version"] == "EWZGEX1"
     assert parsed["symbol"] == "EWZ"
     assert parsed["flip"] == "40.5"
+    assert parsed["ewzref"] == "40"
+
+def test_lecture_projection_math():
+    assert round(level_distance_pct(36.0, 35.75) * 100, 4) == round((36.0 / 35.75 - 1.0) * 100, 4)
+    projected = project_level_1to1(36.0, 35.75, 177900.0)
+    assert round(projected, 2) == round(177900.0 * (36.0 / 35.75), 2)
+
+def test_extract_current_and_reference_prices():
+    rows = [{
+        "raw": {
+            "baseLastPrice": 35.91,
+            "baseDailyLastPrice": 35.75,
+            "strikePrice": 36,
+            "optionType": "Call",
+            "dailyGamma": .05,
+            "dailyOpenInterest": 1000,
+        }
+    }]
+    current, reference = extract_market_prices(rows)
+    assert current == 35.91
+    assert reference == 35.75
