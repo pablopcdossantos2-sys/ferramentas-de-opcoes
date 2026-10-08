@@ -29,6 +29,7 @@ class App(tk.Tk):
         self.snapshot = None
         self.level_vars: dict[str, tk.StringVar] = {}
         self.visible_browser = tk.BooleanVar(value=True)
+        self.ewz_official_only = tk.BooleanVar(value=True)
         self.use_edge_extensions = tk.BooleanVar(value=True)
         self.edge_profile_var = tk.StringVar(value="")
         self.edge_profile_map: dict[str, str] = {}
@@ -157,6 +158,11 @@ class App(tk.Tk):
         ttk.Button(actions, text="Gerar bloco", command=self.refresh_output).pack(side="left")
         ttk.Button(actions, text="Copiar para indicador WIN", command=lambda: self.copy_output("WIN")).pack(side="left", padx=8)
         ttk.Button(actions, text="Copiar para indicador EWZ", command=lambda: self.copy_output("EWZ")).pack(side="left", padx=(0, 8))
+        ttk.Checkbutton(
+            out,
+            text="Indicador EWZ: copiar somente níveis realmente extraídos do Barchart (sem proxies locais)",
+            variable=self.ewz_official_only,
+        ).pack(anchor="w", pady=(8, 0))
         ttk.Label(
             actions,
             text="O mesmo bloco serve para os dois indicadores. Cole apenas em Configurações → Bloco EWZGEX1.",
@@ -331,15 +337,34 @@ class App(tk.Tk):
         self.output.insert("1.0", block)
 
     def copy_output(self, target: str = "WIN"):
-        self.refresh_output()
-        text = self.output.get("1.0", "end").strip()
+        if not self.snapshot:
+            self.refresh_output()
+            return
+
+        if target.upper() == "EWZ" and bool(self.ewz_official_only.get()):
+            text = format_export_block(self.snapshot, barchart_only=True)
+        else:
+            self.refresh_output()
+            text = self.output.get("1.0", "end").strip()
+
         if not text or text.startswith("Atualize"):
             return
+
         self.clipboard_clear()
         self.clipboard_append(text)
         self.update()
+
         if target.upper() == "EWZ":
-            self.status_var.set("Bloco copiado para o indicador EWZ GEX — Níveis Barchart. Cole em Configurações → Bloco EWZGEX1; não cole no código Pine.")
+            official_note = (
+                " Somente níveis extraídos do Barchart foram incluídos; proxies locais foram zerados."
+                if bool(self.ewz_official_only.get())
+                else ""
+            )
+            self.status_var.set(
+                "Bloco copiado para o indicador EWZ GEX — Níveis Barchart."
+                + official_note
+                + " Cole em Configurações → Bloco EWZGEX1; não cole no código Pine."
+            )
         else:
             self.status_var.set("Bloco copiado para o indicador EWZ GEX → WIN. Cole em Configurações → Bloco EWZGEX1; não cole no código Pine.")
 
@@ -497,6 +522,10 @@ class App(tk.Tk):
                 for row in self.snapshot.exposures
             ],
             "tradingview_block": format_export_block(self.snapshot, self._overrides()),
+            "tradingview_block_ewz_barchart_only": format_export_block(
+                self.snapshot,
+                barchart_only=True,
+            ),
         }
         Path(path).write_text(
             json.dumps(payload, ensure_ascii=False, indent=2),
