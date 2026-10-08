@@ -136,3 +136,14 @@ A versão alpha já possui:
 - testes unitários e workflow de build portátil para Windows.
 
 O workflow `.github/workflows/build-ewz-gex-win-desktop.yml` gera um ZIP portátil como artifact do GitHub Actions. A aplicação permanece **alpha** até a coleta e os níveis serem validados em uso real.
+
+
+### Estado metodológico do EWZ GEX → WIN
+
+A versão desktop atual é **0.2.0-alpha.1**. Após revisar a transcrição da palestra, o projeto passou a separar explicitamente:
+
+- EWZ atual/pré-mercado para contextualização dos strikes;
+- fechamento regular EWZ D-1 como referência percentual;
+- WIN no mesmo instante como âncora da projeção 1:1.
+
+A GUI também possui uma janela **Perfil GEX por strike** para auditar Call GEX, Put GEX, Net GEX e OI antes de aceitar os níveis. O próximo gargalo de validação não é mais a fórmula EWZ → WIN, mas a seleção automática dos níveis que devem representar a metodologia original.
