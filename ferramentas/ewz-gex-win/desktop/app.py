@@ -17,8 +17,8 @@ from gex_core import (
 )
 from edge_profiles import list_edge_profiles
 
-APP_TITLE = "EWZ GEX → WIN Desktop"
-APP_VERSION = "0.2.0-alpha.1"
+APP_TITLE = "EWZ GEX Desktop"
+APP_VERSION = "0.3.0-alpha.1"
 
 class App(tk.Tk):
     def __init__(self):
@@ -53,7 +53,7 @@ class App(tk.Tk):
         ttk.Label(root, text=APP_TITLE, font=("Segoe UI", 18, "bold")).pack(anchor="w")
         ttk.Label(
             root,
-            text="Extrai a estrutura de opções do EWZ, organiza níveis GEX e gera um bloco para o indicador do TradingView.",
+            text="Extrai níveis de Gamma Exposure do EWZ no Barchart e gera um bloco universal para dois indicadores: níveis diretos no EWZ e projeções no WIN.",
             wraplength=900,
         ).pack(anchor="w", pady=(2, 12))
 
@@ -148,17 +148,18 @@ class App(tk.Tk):
             )
         table.columnconfigure(5, weight=1)
 
-        out = ttk.LabelFrame(root, text="Bloco para TradingView", padding=10)
+        out = ttk.LabelFrame(root, text="Bloco EWZGEX1 — compatível com EWZ e WIN", padding=10)
         out.pack(fill="x")
         self.output = tk.Text(out, height=3, wrap="word", font=("Consolas", 9))
         self.output.pack(fill="x")
         actions = ttk.Frame(out)
         actions.pack(fill="x", pady=(8, 0))
         ttk.Button(actions, text="Gerar bloco", command=self.refresh_output).pack(side="left")
-        ttk.Button(actions, text="Copiar bloco", command=self.copy_output).pack(side="left", padx=8)
+        ttk.Button(actions, text="Copiar para indicador WIN", command=lambda: self.copy_output("WIN")).pack(side="left", padx=8)
+        ttk.Button(actions, text="Copiar para indicador EWZ", command=lambda: self.copy_output("EWZ")).pack(side="left", padx=(0, 8))
         ttk.Label(
             actions,
-            text="No TradingView: Configurações do indicador → Aplicação desktop → Bloco EWZGEX1. NÃO cole no código Pine.",
+            text="O mesmo bloco serve para os dois indicadores. Cole apenas em Configurações → Bloco EWZGEX1.",
         ).pack(side="left", padx=8)
 
         ttk.Label(root, textvariable=self.status_var, foreground="#555").pack(
@@ -329,7 +330,7 @@ class App(tk.Tk):
         self.output.delete("1.0", "end")
         self.output.insert("1.0", block)
 
-    def copy_output(self):
+    def copy_output(self, target: str = "WIN"):
         self.refresh_output()
         text = self.output.get("1.0", "end").strip()
         if not text or text.startswith("Atualize"):
@@ -337,7 +338,10 @@ class App(tk.Tk):
         self.clipboard_clear()
         self.clipboard_append(text)
         self.update()
-        self.status_var.set("Bloco copiado. No TradingView, cole em Configurações do indicador → Bloco EWZGEX1; não cole no código Pine.")
+        if target.upper() == "EWZ":
+            self.status_var.set("Bloco copiado para o indicador EWZ GEX — Níveis Barchart. Cole em Configurações → Bloco EWZGEX1; não cole no código Pine.")
+        else:
+            self.status_var.set("Bloco copiado para o indicador EWZ GEX → WIN. Cole em Configurações → Bloco EWZGEX1; não cole no código Pine.")
 
     def import_json(self):
         path = filedialog.askopenfilename(
@@ -504,9 +508,10 @@ class App(tk.Tk):
         messagebox.showinfo(
             "Sobre — EWZ GEX → WIN Desktop",
             f"{APP_TITLE}\nVersão {APP_VERSION}\n\n"
-            "Aplicação complementar ao indicador EWZ GEX → WIN.\n"
+            "Aplicação complementar aos indicadores EWZ GEX — Níveis Barchart e EWZ GEX → WIN.\n"
             "Inclui modo de compatibilidade com extensões do Edge, inclusive Cold Turkey.\n"
-            "A projeção principal segue a palestra: distância percentual do fechamento EWZ D-1 aplicada 1:1 ao WIN no mesmo instante.\n"
+            "Modo EWZ: plota os níveis brutos do Barchart diretamente no gráfico do EWZ.\n"
+            "Modo WIN: projeta a distância percentual do fechamento EWZ D-1 em 1:1 para o WIN.\n"
             "Build alpha: os níveis e a coleta ainda estão em validação.",
         )
 
