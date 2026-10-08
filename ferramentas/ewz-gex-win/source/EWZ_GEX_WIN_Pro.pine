@@ -89,7 +89,7 @@ groupModel = "2. Modelo de projeção"
 projectionMode = input.string(
      "1:1 (método original)",
      "Modelo",
-     options = ["1:1 (método original)", "Beta ajustável"],
+     options = ["1:1 (método original)", "Beta ajustável — experimental"],
      group = groupModel
 )
 
@@ -100,7 +100,7 @@ betaInput = input.float(
      maxval = 3.00,
      step = 0.01,
      group = groupModel,
-     tooltip = "Usado somente no modo Beta ajustável. Ex.: beta 0,85 significa que uma variação de 1% no EWZ é projetada como 0,85% no WIN."
+     tooltip = "Recurso experimental que NÃO faz parte do método ensinado na palestra. No método original, a mesma variação percentual do EWZ é aplicada 1:1 ao WIN."
 )
 
 roundToTick = input.bool(
@@ -193,6 +193,8 @@ showPutFloor = input.bool(true, "", inline = "pwf", group = groupGex)
 gexPutFloorManual = input.float(0.0, "Put Wall chão", minval = 0.0, step = 0.01, inline = "pwf", group = groupGex)
 
 bool useAppBlock = levelInputMode == "Bloco do aplicativo" and appBlockOk
+float appEwzRef = useAppBlock ? f_blockFloat("ewzref", na) : na
+float appRefDiffPct = refOk and not na(appEwzRef) and appEwzRef > 0 ? (ewzRef / appEwzRef - 1.0) * 100.0 : na
 
 gexTeto = useAppBlock ? f_blockFloat("teto", 0.0) : gexTetoManual
 gexCall2 = useAppBlock ? f_blockFloat("cw2", 0.0) : gexCall2Manual
@@ -377,14 +379,16 @@ if barstate.islast
         table.cell(panel, 1, 1, refOk ? str.tostring(ewzRef, "#.##") : "SEM DADO")
         table.cell(panel, 2, 1, "0,00%")
         table.cell(panel, 3, 1, refOk ? f_fmtPrice(winRef) : "SEM DADO")
-        table.cell(panel, 4, 1, "")
+        table.cell(panel, 4, 1, not na(appEwzRef) ? "App ref." : "")
         table.cell(
              panel,
              5,
              1,
-             refMode == "Automática — fechamento NY" and not na(refTimeAuto)
-                 ? str.format_time(refTimeAuto, "dd/MM HH:mm", "America/Sao_Paulo")
-                 : "manual"
+             not na(appEwzRef)
+                 ? str.tostring(appEwzRef, "#.##") + (not na(appRefDiffPct) ? " (" + str.tostring(appRefDiffPct, "#.##") + "%)" : "")
+                 : refMode == "Automática — fechamento NY" and not na(refTimeAuto)
+                     ? str.format_time(refTimeAuto, "dd/MM HH:mm", "America/Sao_Paulo")
+                     : "manual"
         )
 
         f_row(2, "Call/Put teto", gexTeto, pTeto, color.red)
