@@ -7,18 +7,25 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 from barchart_client import BARCHART_URL, BarchartBrowserClient
-from gex_core import LEVEL_SPECS, contracts_from_records, derive_levels, format_export_block
+from gex_core import (
+    LEVEL_SPECS,
+    contracts_from_records,
+    derive_levels,
+    extract_market_prices,
+    format_export_block,
+    level_distance_pct,
+)
 from edge_profiles import list_edge_profiles
 
 APP_TITLE = "EWZ GEX → WIN Desktop"
-APP_VERSION = "0.1.1-alpha.1"
+APP_VERSION = "0.2.0-alpha.1"
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(f"{APP_TITLE} {APP_VERSION}")
-        self.geometry("1020x790")
-        self.minsize(900, 680)
+        self.geometry("1120x830")
+        self.minsize(980, 700)
         self.snapshot = None
         self.level_vars: dict[str, tk.StringVar] = {}
         self.visible_browser = tk.BooleanVar(value=True)
@@ -29,6 +36,7 @@ class App(tk.Tk):
         self.status_var = tk.StringVar(value="Pronto. Clique em Atualizar Barchart.")
         self.source_var = tk.StringVar(value=BARCHART_URL)
         self.spot_var = tk.StringVar(value="—")
+        self.reference_close_var = tk.StringVar(value="—")
         self.exp_var = tk.StringVar(value="—")
         self._build_ui()
         self._reload_edge_profiles()
@@ -94,7 +102,12 @@ class App(tk.Tk):
         info = ttk.LabelFrame(root, text="Snapshot", padding=10)
         info.pack(fill="x")
         for col, (label, var) in enumerate(
-            (("Spot EWZ", self.spot_var), ("Vencimentos", self.exp_var), ("Fonte", self.source_var))
+            (
+                ("EWZ atual / pré-mercado", self.spot_var),
+                ("Fechamento EWZ D-1 (referência)", self.reference_close_var),
+                ("Vencimentos", self.exp_var),
+                ("Fonte", self.source_var),
+            )
         ):
             ttk.Label(info, text=label, font=("Segoe UI", 9, "bold")).grid(
                 row=0, column=col, sticky="w", padx=(0, 18)
@@ -102,11 +115,11 @@ class App(tk.Tk):
             ttk.Label(info, textvariable=var, wraplength=430 if col == 2 else 220).grid(
                 row=1, column=col, sticky="w", padx=(0, 18)
             )
-        info.columnconfigure(2, weight=1)
+        info.columnconfigure(3, weight=1)
 
         table = ttk.LabelFrame(root, text="Níveis — você pode revisar/editar antes de copiar", padding=10)
         table.pack(fill="both", expand=True, pady=12)
-        headers = ["Nível", "EWZ", "Origem", "Confiança", "Observação"]
+        headers = ["Nível", "EWZ", "Δ vs. fechamento D-1", "Origem", "Confiança", "Observação"]
         for c, h in enumerate(headers):
             ttk.Label(table, text=h, font=("Segoe UI", 9, "bold")).grid(
                 row=0, column=c, sticky="w", padx=4, pady=4
@@ -119,16 +132,19 @@ class App(tk.Tk):
             ttk.Entry(table, textvariable=var, width=12).grid(
                 row=r, column=1, sticky="w", padx=4, pady=4
             )
-            ttk.Label(table, text="—", name=f"origin_{key}").grid(
+            ttk.Label(table, text="—", name=f"pct_{key}").grid(
                 row=r, column=2, sticky="w", padx=4, pady=4
             )
-            ttk.Label(table, text="—", name=f"confidence_{key}").grid(
+            ttk.Label(table, text="—", name=f"origin_{key}").grid(
                 row=r, column=3, sticky="w", padx=4, pady=4
             )
-            ttk.Label(table, text="—", wraplength=390, name=f"note_{key}").grid(
+            ttk.Label(table, text="—", name=f"confidence_{key}").grid(
                 row=r, column=4, sticky="w", padx=4, pady=4
             )
-        table.columnconfigure(4, weight=1)
+            ttk.Label(table, text="—", wraplength=360, name=f"note_{key}").grid(
+                row=r, column=5, sticky="w", padx=4, pady=4
+            )
+        table.columnconfigure(5, weight=1)
 
         out = ttk.LabelFrame(root, text="Bloco para TradingView", padding=10)
         out.pack(fill="x")
@@ -207,11 +223,14 @@ class App(tk.Tk):
                 edge_profile_dir=profile_dir,
             )
             records, official, meta = client.fetch()
+            current_spot, reference_close = extract_market_prices(records)
             contracts = contracts_from_records(records, prefer_eod=True)
             snap = derive_levels(
                 contracts,
                 official,
                 source_url=meta.get("page_url", BARCHART_URL),
+                selection_spot=current_spot,
+                reference_close=reference_close,
             )
             self.after(0, lambda: self._apply_snapshot(snap, meta))
         except Exception as exc:
@@ -229,6 +248,9 @@ class App(tk.Tk):
     def _apply_snapshot(self, snap, meta=None):
         self.snapshot = snap
         self.spot_var.set(f"{snap.spot:.2f}")
+        self.reference_close_var.set(
+            "—" if snap.reference_close is None else f"{snap.reference_close:.2f}"
+        )
         self.exp_var.set(
             ", ".join(snap.expirations[:5])
             + ("…" if len(snap.expirations) > 5 else "")
@@ -240,6 +262,10 @@ class App(tk.Tk):
         for lv in snap.levels:
             self.level_vars[lv.key].set(
                 "" if lv.value is None else f"{lv.value:.4f}".rstrip("0").rstrip(".")
+            )
+            pct = level_distance_pct(lv.value, snap.reference_close)
+            levels_frame.nametowidget(f"pct_{lv.key}").configure(
+                text="—" if pct is None else f"{pct * 100:+.2f}%"
             )
             levels_frame.nametowidget(f"origin_{lv.key}").configure(text=lv.origin)
             levels_frame.nametowidget(f"confidence_{lv.key}").configure(text=lv.confidence)
@@ -310,8 +336,15 @@ class App(tk.Tk):
             records = _flatten_records(
                 payload.get("data", payload) if isinstance(payload, dict) else payload
             )
+            current_spot, reference_close = extract_market_prices(records)
             contracts = contracts_from_records(records, prefer_eod=True)
-            snap = derive_levels(contracts, {}, source_url=str(path))
+            snap = derive_levels(
+                contracts,
+                {},
+                source_url=str(path),
+                selection_spot=current_spot,
+                reference_close=reference_close,
+            )
             self._apply_snapshot(snap, {"api_url": str(path)})
         except Exception as exc:
             self._error(str(exc))
@@ -334,6 +367,7 @@ class App(tk.Tk):
             "app_version": APP_VERSION,
             "symbol": self.snapshot.symbol,
             "spot": self.snapshot.spot,
+            "reference_close": self.snapshot.reference_close,
             "source_url": self.snapshot.source_url,
             "source_timestamp": self.snapshot.source_timestamp,
             "expirations": self.snapshot.expirations,
@@ -374,6 +408,7 @@ class App(tk.Tk):
             f"{APP_TITLE}\nVersão {APP_VERSION}\n\n"
             "Aplicação complementar ao indicador EWZ GEX → WIN.\n"
             "Inclui modo de compatibilidade com extensões do Edge, inclusive Cold Turkey.\n"
+            "A projeção principal segue a palestra: distância percentual do fechamento EWZ D-1 aplicada 1:1 ao WIN no mesmo instante.\n"
             "Build alpha: os níveis e a coleta ainda estão em validação.",
         )
 
