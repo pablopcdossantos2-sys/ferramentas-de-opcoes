@@ -97,7 +97,8 @@ python app.py</code></pre>
     <p>O modo <strong>Manual individual</strong> continua disponível como fallback.</p><div class="concept-caution"><strong>Não cole o bloco dentro do código Pine</strong><p>O texto <code>EWZGEX1|...</code> deve ser colado somente na janela de <strong>Configurações do indicador → Aplicação desktop → Bloco EWZGEX1</strong>. Colá-lo em uma linha como <code>tooltip = EWZGEX1|...</code> gera erro de sintaxe, porque <code>tooltip</code> aceita uma string entre aspas, não o bloco de dados sem aspas.</p></div>
   </article>
 
-  <article id="validacao" class="detail-block">
+  <article class="detail-block"><p class="eyebrow">MÉTODO DA PALESTRA</p><h2>Como a projeção EWZ → WIN é calculada</h2><p>A aplicação agora separa <strong>EWZ atual / pré-mercado</strong> de <strong>Fechamento EWZ D-1</strong>. O preço atual ajuda a contextualizar os strikes; o fechamento anterior é a referência usada na régua percentual da palestra.</p><pre><code>variação = nível EWZ / fechamento EWZ D-1 - 1
+nível WIN = fechamento WIN no mesmo instante × (1 + variação)</code></pre><p>O modo principal do Pine é <strong>1:1 (método original)</strong>. O modo com beta ficou explicitamente marcado como experimental.</p><div class="concept-caution"><strong>Auditoria</strong><p>O bloco <code>EWZGEX1</code> agora também carrega <code>ewzref</code>. No painel do Pine, a referência do aplicativo pode ser comparada com a referência sincronizada obtida pelo TradingView. Se houver diferença relevante, não trate a projeção como validada até descobrir a causa.</p></div></article><article id="validacao" class="detail-block">
     <p class="eyebrow">VALIDAÇÃO</p><h2>Como saber se funcionou</h2>
     <ul>
       <li>A aplicação exibe o spot do EWZ e uma lista de vencimentos/strikes processados.</li>
