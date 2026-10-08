@@ -69,6 +69,8 @@ class App(tk.Tk):
         ttk.Button(controls, text="Importar JSON", command=self.import_json).pack(side="left")
         ttk.Button(controls, text="Exportar CSV", command=self.export_csv).pack(side="left", padx=(8, 0))
         ttk.Button(controls, text="Salvar JSON", command=self.save_snapshot_json).pack(side="left", padx=(8, 0))
+        self.profile_btn = ttk.Button(controls, text="Perfil GEX por strike", command=self.show_strike_profile, state="disabled")
+        self.profile_btn.pack(side="left", padx=(8, 0))
         ttk.Button(controls, text="Sobre", command=self.show_about).pack(side="right")
 
         browser = ttk.LabelFrame(root, text="Edge e extensões", padding=10)
@@ -271,6 +273,7 @@ class App(tk.Tk):
             levels_frame.nametowidget(f"confidence_{lv.key}").configure(text=lv.confidence)
             levels_frame.nametowidget(f"note_{lv.key}").configure(text=lv.note)
 
+        self.profile_btn.configure(state="normal")
         self.refresh_output()
         warn = " | ".join(snap.warnings)
         profile_meta = (meta or {}).get("edge_profile") or {}
@@ -364,6 +367,86 @@ class App(tk.Tk):
         except Exception as exc:
             self._error(str(exc))
 
+
+    def show_strike_profile(self):
+        if not self.snapshot:
+            messagebox.showinfo(APP_TITLE, "Atualize ou importe dados primeiro.")
+            return
+
+        win = tk.Toplevel(self)
+        win.title("Perfil GEX por strike — EWZ")
+        win.geometry("900x560")
+
+        ttk.Label(
+            win,
+            text="Mapa de Gamma Exposure capturado. Use esta janela para conferir visualmente os strikes relevantes antes da projeção.",
+            wraplength=840,
+        ).pack(anchor="w", padx=14, pady=(14, 8))
+
+        frame = ttk.Frame(win, padding=(14, 0, 14, 14))
+        frame.pack(fill="both", expand=True)
+
+        columns = ("strike", "call_gex", "put_gex", "net_gex", "call_oi", "put_oi", "mark")
+        tree = ttk.Treeview(frame, columns=columns, show="headings")
+        headings = {
+            "strike": "Strike",
+            "call_gex": "Call GEX",
+            "put_gex": "Put GEX",
+            "net_gex": "Net GEX",
+            "call_oi": "Call OI",
+            "put_oi": "Put OI",
+            "mark": "Nível associado",
+        }
+        widths = {
+            "strike": 80,
+            "call_gex": 120,
+            "put_gex": 120,
+            "net_gex": 120,
+            "call_oi": 100,
+            "put_oi": 100,
+            "mark": 180,
+        }
+        for col in columns:
+            tree.heading(col, text=headings[col])
+            tree.column(col, width=widths[col], anchor="e" if col != "mark" else "w")
+
+        yscroll = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=yscroll.set)
+        tree.pack(side="left", fill="both", expand=True)
+        yscroll.pack(side="right", fill="y")
+
+        try:
+            levels = self._overrides()
+        except ValueError:
+            levels = {}
+
+        labels = dict(LEVEL_SPECS)
+        for row in self.snapshot.exposures:
+            matches = [
+                labels[key]
+                for key, value in levels.items()
+                if value is not None and abs(row.strike - value) < 1e-9
+            ]
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    f"{row.strike:.2f}",
+                    f"{row.call_gex:,.0f}",
+                    f"{row.put_gex:,.0f}",
+                    f"{row.net_gex:,.0f}",
+                    f"{row.call_oi:,.0f}",
+                    f"{row.put_oi:,.0f}",
+                    ", ".join(matches),
+                ),
+            )
+
+        ttk.Label(
+            win,
+            text="Observação: este perfil é uma aproximação local baseada nos campos capturados; use-o para auditoria, não como prova de equivalência exata ao cálculo proprietário do Barchart.",
+            foreground="#555",
+            wraplength=840,
+        ).pack(anchor="w", padx=14, pady=(0, 14))
 
     def save_snapshot_json(self):
         if not self.snapshot:
