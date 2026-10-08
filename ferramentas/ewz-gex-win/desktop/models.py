@@ -34,6 +34,7 @@ class LevelValue:
 class GexSnapshot:
     symbol: str
     spot: float
+    reference_close: Optional[float]
     levels: list[LevelValue]
     exposures: list[StrikeExposure] = field(default_factory=list)
     expirations: list[str] = field(default_factory=list)
