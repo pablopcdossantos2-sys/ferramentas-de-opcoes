@@ -1,5 +1,5 @@
 {
-  "schema_version": 9,
+  "schema_version": 10,
   "updated_at": "2026-10-06",
   "tools": [
     {
@@ -27,18 +27,26 @@
         "ferramentas/ewz-gex-win/desktop/gex_core.py",
         "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
       ],
-      "status": "alpha funcional — build Windows gerado por GitHub Actions; coleta e níveis ainda em validação",
+      "status": "alpha funcional — método de projeção 1:1 alinhado à palestra; seleção/extração dos níveis ainda em validação",
       "page": "ferramentas/ewz-gex-win/index.html",
       "role": "primary",
       "installation_tutorial": "ferramentas/ewz-gex-win/tutorial.html",
       "visual_assets": [],
       "build_workflow": ".github/workflows/build-ewz-gex-win-desktop.yml",
       "export_format": "EWZGEX1",
-      "version": "0.1.1-alpha.1",
+      "version": "0.2.0-alpha.1",
       "browser_compatibility": {
         "browser": "Microsoft Edge",
         "mode": "perfil isolado com extensões copiadas do perfil selecionado",
         "cold_turkey_extension_id": "jfphahkinplobmabmgjmjgflbhjjddeb"
+      },
+      "projection_method": {
+        "name": "EWZ close-to-level percentage mirrored 1:1 to WIN",
+        "primary": true,
+        "formula": "WIN_level = WIN_ref * (EWZ_level / EWZ_ref)",
+        "ewz_reference": "fechamento regular D-1",
+        "win_reference": "preço do WIN no mesmo instante do fechamento regular do EWZ",
+        "beta_mode": "experimental"
       }
     },
     {
