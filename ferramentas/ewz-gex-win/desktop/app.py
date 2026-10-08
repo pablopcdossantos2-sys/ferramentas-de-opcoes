@@ -296,12 +296,27 @@ class App(tk.Tk):
                     raise ValueError(f"Valor inválido em {key}: {text}")
         return vals
 
+    def _refresh_percentages(self):
+        if not self.snapshot:
+            return
+        levels_frame = self._levels_frame()
+        try:
+            overrides = self._overrides()
+        except ValueError:
+            return
+        for key, _ in LEVEL_SPECS:
+            pct = level_distance_pct(overrides.get(key), self.snapshot.reference_close)
+            levels_frame.nametowidget(f"pct_{key}").configure(
+                text="—" if pct is None else f"{pct * 100:+.2f}%"
+            )
+
     def refresh_output(self):
         if not self.snapshot:
             self.output.delete("1.0", "end")
             self.output.insert("1.0", "Atualize ou importe dados primeiro.")
             return
 
+        self._refresh_percentages()
         try:
             block = format_export_block(self.snapshot, self._overrides())
         except ValueError as exc:
