@@ -4,7 +4,7 @@ Aplicação desktop/GUI complementar ao indicador Pine do projeto principal.
 
 ## Estado
 
-**Alpha de desenvolvimento — versão 0.2.0-alpha.1.** A interface, o núcleo de agregação GEX, a captura via Microsoft Edge e o formato de exportação `EWZGEX1` já estão implementados. A coleta real no Barchart ainda precisa ser validada em máquinas Windows diferentes e acompanhada após mudanças no site.
+**Alpha de desenvolvimento — versão 0.3.0-alpha.1.** A interface, o núcleo de agregação GEX, a captura via Microsoft Edge e o formato de exportação `EWZGEX1` já estão implementados. A coleta real no Barchart ainda precisa ser validada em máquinas Windows diferentes e acompanhada após mudanças no site.
 
 ## Arquitetura
 
@@ -96,4 +96,14 @@ Depois, usando o WIN no mesmo instante do fechamento regular do EWZ:
 
 Esse é o modo **1:1 (método original)**. Qualquer beta diferente de 1 é experimental e não faz parte da metodologia ensinada.
 
-A versão `0.2.0-alpha.1` passa a mostrar separadamente o EWZ atual e o fechamento D-1, calcula a distância percentual de cada nível e inclui `ewzref` no bloco `EWZGEX1` para auditoria no Pine.
+A versão `0.3.0-alpha.1` passa a mostrar separadamente o EWZ atual e o fechamento D-1, calcula a distância percentual de cada nível e inclui `ewzref` no bloco `EWZGEX1` para auditoria no Pine.
+
+
+## Dois indicadores TradingView
+
+A partir da versão **0.3.0-alpha.1**, a mesma coleta do Barchart alimenta dois usos diferentes:
+
+1. **EWZ GEX — Níveis Barchart** (`source/EWZ_GEX_EWZ_Pro.pine`): plota os níveis diretamente no gráfico do EWZ, sem conversão. Por padrão, a aplicação pode copiar para este indicador somente os níveis realmente extraídos do Barchart; proxies locais ficam zerados.
+2. **EWZ GEX → WIN Pro** (`source/EWZ_GEX_WIN_Pro.pine`): usa os níveis do EWZ e projeta a mesma distância percentual para o WIN a partir das referências sincronizadas.
+
+O formato `EWZGEX1` continua sendo o contrato entre a aplicação desktop e os dois indicadores. O campo `mode=official` identifica a exportação filtrada para níveis efetivamente extraídos do Barchart; `mode=reviewed` identifica a exportação completa/revisável.
