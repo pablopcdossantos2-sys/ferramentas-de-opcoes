@@ -4,7 +4,7 @@ Aplicação desktop/GUI complementar ao indicador Pine do projeto principal.
 
 ## Estado
 
-**Alpha de desenvolvimento.** A interface, o núcleo de agregação GEX, a captura via Microsoft Edge e o formato de exportação `EWZGEX1` já estão implementados. A coleta real no Barchart ainda precisa ser validada em máquinas Windows diferentes e acompanhada após mudanças no site.
+**Alpha de desenvolvimento — versão 0.2.0-alpha.1.** A interface, o núcleo de agregação GEX, a captura via Microsoft Edge e o formato de exportação `EWZGEX1` já estão implementados. A coleta real no Barchart ainda precisa ser validada em máquinas Windows diferentes e acompanhada após mudanças no site.
 
 ## Arquitetura
 
@@ -77,3 +77,23 @@ O arquivo `EWZ_GEX_WIN_Desktop.spec` gera uma pasta portátil para Windows com P
 3. comparar Call Wall / Put Wall / Gamma Flip extraídos com os valores exibidos visualmente na página;
 4. calibrar ou substituir os níveis auxiliares específicos da metodologia do curso;
 5. só então marcar a aplicação como versão estável e finalizar o tutorial de instalação para usuários finais.
+
+
+## Método de projeção confirmado pela palestra
+
+A transcrição da palestra permitiu separar duas referências que antes estavam misturadas:
+
+- **EWZ atual / pré-mercado:** serve para contextualizar quais strikes estão acima/abaixo do preço e quais regiões são relevantes.
+- **Fechamento regular do EWZ do dia anterior:** é a âncora matemática da projeção.
+
+Para cada nível:
+
+`variacao = nivel_EWZ / fechamento_EWZ_D-1 - 1`
+
+Depois, usando o WIN no mesmo instante do fechamento regular do EWZ:
+
+`nivel_WIN = fechamento_WIN_mesmo_instante × (1 + variacao)`
+
+Esse é o modo **1:1 (método original)**. Qualquer beta diferente de 1 é experimental e não faz parte da metodologia ensinada.
+
+A versão `0.2.0-alpha.1` passa a mostrar separadamente o EWZ atual e o fechamento D-1, calcula a distância percentual de cada nível e inclui `ewzref` no bloco `EWZGEX1` para auditoria no Pine.
