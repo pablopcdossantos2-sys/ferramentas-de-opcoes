@@ -1,6 +1,6 @@
 {
-  "schema_version": 10,
-  "updated_at": "2026-10-06",
+  "schema_version": 11,
+  "updated_at": "2026-10-08",
   "tools": [
     {
       "id": "ewz-gex-win",
@@ -15,7 +15,8 @@
         "put-wall",
         "gamma-flip",
         "EWZ",
-        "WIN"
+        "WIN",
+        "EWZ-direct-levels"
       ],
       "data_acquisition": "aplicação externa / coletor",
       "tradingview": true,
@@ -25,16 +26,17 @@
         "ferramentas/ewz-gex-win/desktop/edge_profiles.py",
         "ferramentas/ewz-gex-win/desktop/barchart_client.py",
         "ferramentas/ewz-gex-win/desktop/gex_core.py",
-        "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine"
+        "ferramentas/ewz-gex-win/source/EWZ_GEX_WIN_Pro.pine",
+        "ferramentas/ewz-gex-win/source/EWZ_GEX_EWZ_Pro.pine"
       ],
-      "status": "alpha funcional — método de projeção 1:1 alinhado à palestra; seleção/extração dos níveis ainda em validação",
+      "status": "alpha funcional — coleta única alimenta indicador EWZ direto e projeção EWZ→WIN; seleção/extração dos níveis segue em validação",
       "page": "ferramentas/ewz-gex-win/index.html",
       "role": "primary",
       "installation_tutorial": "ferramentas/ewz-gex-win/tutorial.html",
       "visual_assets": [],
       "build_workflow": ".github/workflows/build-ewz-gex-win-desktop.yml",
       "export_format": "EWZGEX1",
-      "version": "0.2.0-alpha.1",
+      "version": "0.3.0-alpha.1",
       "browser_compatibility": {
         "browser": "Microsoft Edge",
         "mode": "perfil isolado com extensões copiadas do perfil selecionado",
@@ -47,6 +49,12 @@
         "ewz_reference": "fechamento regular D-1",
         "win_reference": "preço do WIN no mesmo instante do fechamento regular do EWZ",
         "beta_mode": "experimental"
+      },
+      "direct_ewz_indicator": {
+        "file": "ferramentas/ewz-gex-win/source/EWZ_GEX_EWZ_Pro.pine",
+        "behavior": "plota níveis do EWZ diretamente no gráfico AMEX:EWZ, sem projeção",
+        "recommended_export_mode": "official",
+        "export_filter": "níveis com origem Barchart; proxies locais zerados"
       }
     },
     {
