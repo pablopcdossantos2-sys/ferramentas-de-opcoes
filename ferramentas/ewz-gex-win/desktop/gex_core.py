@@ -187,9 +187,21 @@ def derive_levels(
         warnings=ws,
     )
 
-def format_export_block(snapshot: GexSnapshot, overrides: Optional[Mapping[str, Optional[float]]] = None) -> str:
-    vals = {lv.key: lv.value for lv in snapshot.levels}
-    if overrides:
+def format_export_block(
+    snapshot: GexSnapshot,
+    overrides: Optional[Mapping[str, Optional[float]]] = None,
+    *,
+    barchart_only: bool = False,
+) -> str:
+    if barchart_only:
+        vals = {
+            lv.key: lv.value if lv.origin.startswith("Barchart") else None
+            for lv in snapshot.levels
+        }
+    else:
+        vals = {lv.key: lv.value for lv in snapshot.levels}
+
+    if overrides and not barchart_only:
         vals.update(overrides)
 
     def f(v: Optional[float]) -> str:
@@ -206,6 +218,7 @@ def format_export_block(snapshot: GexSnapshot, overrides: Optional[Mapping[str, 
     for key, _ in LEVEL_SPECS:
         parts.append(f"{key}={f(vals.get(key))}")
     parts.append("source=barchart")
+    parts.append("mode=official" if barchart_only else "mode=reviewed")
     return "|".join(parts)
 
 def parse_export_block(text: str) -> dict[str, str]:
