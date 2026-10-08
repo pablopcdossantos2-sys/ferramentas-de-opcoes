@@ -68,3 +68,16 @@ def test_extract_current_and_reference_prices():
     current, reference = extract_market_prices(rows)
     assert current == 35.91
     assert reference == 35.75
+
+
+def test_barchart_only_export_omits_local_proxies():
+    cs = contracts_from_records(sample_records())
+    snap = derive_levels(cs, {"flip": 40.5, "cw1": 42, "floor": 38})
+    block = format_export_block(snap, barchart_only=True)
+    parsed = parse_export_block(block)
+    assert parsed["mode"] == "official"
+    assert parsed["flip"] == "40.5"
+    assert parsed["cw1"] == "42"
+    assert parsed["floor"] == "38"
+    assert parsed["cw2"] == "0"
+    assert parsed["gres"] == "0"
